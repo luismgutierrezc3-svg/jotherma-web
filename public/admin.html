@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JOTHERMA — Panel de Administración</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* Mantener los mismos estilos del diseño original */
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #1c2333;
+  --border: #30363d;
+  --azul: #2563a8;
+  --azul-bright: #3b82f6;
+  --naranja: #e07b2a;
+  --verde: #2da44e;
+  --rojo: #f85149;
+  --amarillo: #e3b341;
+  --texto: #e6edf3;
+  --texto2: #8b949e;
+  --texto3: #6e7681;
+  --blanco: #ffffff;
+  --sidebar-w: 260px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;overflow-x:hidden;}
+
+/* LOGIN */
+#login-screen{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;
+}
+.login-box{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:48px 40px;width:100%;max-width:420px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.5);
+}
+.login-logo{text-align:center;margin-bottom:32px;}
+.login-logo .badge{
+  display:inline-block;background:rgba(37,99,168,0.15);border:1px solid rgba(59,130,246,0.3);
+  color:var(--azul-bright);font-size:0.72rem;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;padding:6px 16px;border-radius:20px;margin-bottom:16px;
+}
+.login-logo h1{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--blanco);}
+.login-logo p{color:var(--texto2);font-size:0.88rem;margin-top:6px;}
+.login-field{margin-bottom:18px;}
+.login-field label{display:block;font-size:0.8rem;font-weight:600;color:var(--texto2);margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;}
+.login-field input{
+  width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:12px 16px;color:var(--texto);font-family:'DM Sans',sans-serif;font-size:0.95rem;
+  outline:none;transition:border-color 0.2s;
+}
+.login-field input:focus{border-color:var(--azul-bright);}
+.btn-login{
+  width:100%;background:var(--azul);color:#fff;border:none;border-radius:8px;
+  padding:14px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;
+}
+.btn-login:hover{background:#1d4f91;transform:translateY(-1px);}
+.btn-login:disabled{opacity:0.5;cursor:not-allowed;}
+.login-error{
+  background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.3);
+  color:var(--rojo);border-radius:6px;padding:10px 14px;font-size:0.85rem;
+  margin-bottom:16px;display:none;
+}
+#admin-app{display:none;}
+.toast{
+  position:fixed;top:20px;right:20px;background:var(--bg2);border:1px solid var(--border);
+  padding:16px 20px;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  z-index:9999;animation:slideIn 0.3s ease;min-width:280px;
+}
+.toast.success{border-color:var(--verde);background:rgba(45,164,78,0.1);}
+.toast.error{border-color:var(--rojo);background:rgba(248,81,73,0.1);}
+@keyframes slideIn{from{transform:translateX(400px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- PANTALLA DE LOGIN -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="badge">Admin Panel</div>
+      <h1>JOTHERMA</h1>
+      <p>Panel de Administración</p>
+    </div>
+    <div id="login-error" class="login-error"></div>
+    <form id="login-form">
+      <div class="login-field">
+        <label>Email</label>
+        <input type="email" id="inp-email" required autocomplete="username"/>
+      </div>
+      <div class="login-field">
+        <label>Contraseña</label>
+        <input type="password" id="inp-pass" required autocomplete="current-password"/>
+      </div>
+      <button type="submit" class="btn-login" id="btn-login">Iniciar sesión</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- APLICACIÓN ADMIN (después del login) -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="admin-app">
+  <h1 style="color:white;text-align:center;padding:40px;">Bienvenido al panel de administración</h1>
+  <p style="color:var(--texto2);text-align:center;">Panel funcional conectado al backend</p>
+  <div style="text-align:center;padding:20px;">
+    <button onclick="doLogout()" style="padding:12px 24px;background:var(--rojo);color:white;border:none;border-radius:6px;cursor:pointer;">Cerrar sesión</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ══════════════════════════════════════════════════════════
+const API_URL = '/api'; // Ajustar según tu configuración
+
+// ══════════════════════════════════════════════════════════
+// SISTEMA DE LOGIN
+// ══════════════════════════════════════════════════════════
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await doLogin();
+});
+
+async function doLogin() {
+  const email = document.getElementById('inp-email').value.trim();
+  const password = document.getElementById('inp-pass').value;
+  const btn = document.getElementById('btn-login');
+  const err = document.getElementById('login-error');
+
+  if (!email || !password) {
+    showError('Por favor completa todos los campos');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Iniciando sesión...';
+  err.style.display = 'none';
+
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al iniciar sesión');
+    }
+
+    // Guardar token
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+    // Mostrar app
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-app').style.display = 'block';
+    
+    showToast('✓ Sesión iniciada correctamente');
+
+  } catch (error) {
+    console.error('Error:', error);
+    showError(error.message || 'Error al iniciar sesión');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Iniciar sesión';
+  }
+}
+
+function showError(message) {
+  const err = document.getElementById('login-error');
+  err.textContent = message;
+  err.style.display = 'block';
+  setTimeout(() => err.style.display = 'none', 5000);
+}
+
+// ══════════════════════════════════════════════════════════
+// LOGOUT
+// ══════════════════════════════════════════════════════════
+async function doLogout() {
+  try {
+    await fetch(`${API_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+  } catch (error) {
+    console.error('Error en logout:', error);
+  } finally {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('admin-app').style.display = 'none';
+    document.getElementById('inp-email').value = '';
+    document.getElementById('inp-pass').value = '';
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// VERIFICAR SESIÓN AL CARGAR
+// ══════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch(`${API_URL}/auth/verify`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-app').style.display = 'block';
+      } else {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+      }
+    } catch (error) {
+      console.error('Error verificando sesión:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario');
+    }
+  }
+});
+
+// ══════════════════════════════════════════════════════════
+// SISTEMA DE NOTIFICACIONES
+// ══════════════════════════════════════════════════════════
+function showToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+</script>
+</body>
+</html>
