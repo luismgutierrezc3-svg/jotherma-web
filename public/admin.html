@@ -4,616 +4,190 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JOTHERMA — Panel de Administración</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0f;
-  --surface: #111118;
-  --surface2: #1a1a24;
-  --border: #2a2a3a;
-  --accent: #4f8aff;
-  --accent2: #ff6b4a;
-  --success: #3ecf8e;
-  --warning: #f5a623;
-  --danger: #ff4a4a;
-  --text: #e8e8f0;
-  --muted: #6b6b80;
-  --gold: #f0c060;
+  --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--border:#2a2a3a;
+  --accent:#4f8aff;--accent2:#ff6b4a;--success:#3ecf8e;--warning:#f5a623;
+  --danger:#ff4a4a;--text:#e8e8f0;--muted:#6b6b80;--gold:#f0c060;
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden;}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:90%;max-width:400px;}
+.login-box h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:6px;text-align:center;margin-bottom:4px;}
+.login-box p{text-align:center;color:var(--muted);font-size:0.82rem;margin-bottom:32px;}
+.error-msg{background:rgba(255,74,74,0.1);border:1px solid rgba(255,74,74,0.3);color:var(--danger);padding:10px 14px;border-radius:8px;font-size:0.83rem;margin-bottom:16px;display:none;}
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  overflow: hidden;
-}
+.sidebar{width:260px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid var(--border);}
+.sidebar-logo h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;line-height:1;}
+.sidebar-logo span{font-size:0.7rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.user-card{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.user-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0;background:linear-gradient(135deg,var(--accent),#7b4fff);}
+.user-name{font-size:0.85rem;font-weight:600;}
+.user-role{font-size:0.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:2px 7px;border-radius:20px;display:inline-block;margin-top:2px;}
+.role-admin{background:rgba(79,138,255,0.15);color:var(--accent);}
+.role-colab{background:rgba(62,207,142,0.15);color:var(--success);}
+.nav-section{padding:16px 12px 8px;}
+.nav-label{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:0 12px;margin-bottom:6px;font-weight:600;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s;color:var(--muted);font-size:0.88rem;font-weight:500;border:none;background:none;width:100%;text-align:left;position:relative;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(79,138,255,0.12);color:var(--accent);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--accent);border-radius:0 3px 3px 0;}
+.nav-item .icon{font-size:1.1rem;width:20px;text-align:center;}
+.badge{margin-left:auto;background:var(--accent2);color:white;font-size:0.65rem;padding:2px 7px;border-radius:20px;font-weight:700;}
+.sidebar-footer{margin-top:auto;padding:16px 12px;border-top:1px solid var(--border);}
 
-/* ── SIDEBAR ── */
-.sidebar {
-  width: 260px;
-  min-height: 100vh;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
-}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;flex-shrink:0;}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;flex:1;}
+.content{flex:1;overflow-y:auto;padding:28px;}
 
-.sidebar-logo {
-  padding: 28px 24px 20px;
-  border-bottom: 1px solid var(--border);
-}
+.panel{display:none;animation:fadeIn 0.3s ease;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-.sidebar-logo h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2rem;
-  letter-spacing: 4px;
-  color: var(--text);
-  line-height: 1;
-}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:border-color 0.2s;}
+.stat-card:hover{border-color:var(--accent);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stat-card.blue::before{background:var(--accent);}
+.stat-card.green::before{background:var(--success);}
+.stat-card.orange::before{background:var(--accent2);}
+.stat-card.gold::before{background:var(--gold);}
+.stat-icon{font-size:1.6rem;margin-bottom:12px;}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:2px;line-height:1;}
+.stat-label{font-size:0.78rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
 
-.sidebar-logo span {
-  font-size: 0.7rem;
-  color: var(--muted);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  font-weight: 500;
-}
+.btn{padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.83rem;font-weight:600;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--accent);color:white;}
+.btn-primary:hover{background:#3a74e8;transform:translateY(-1px);}
+.btn-danger{background:rgba(255,74,74,0.15);color:var(--danger);border:1px solid rgba(255,74,74,0.3);}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
 
-.user-card {
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;}
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;}
+table{width:100%;border-collapse:collapse;}
+th{background:var(--surface2);padding:12px 16px;text-align:left;font-size:0.72rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+td{padding:13px 16px;font-size:0.85rem;border-top:1px solid var(--border);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.tag{padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;}
+.tag-pub{background:rgba(62,207,142,0.15);color:var(--success);}
+.tag-bor{background:rgba(245,166,35,0.15);color:var(--warning);}
+.tag-nuevo{background:rgba(255,107,74,0.15);color:var(--accent2);}
+.tag-leido{background:rgba(107,107,128,0.15);color:var(--muted);}
+.actions{display:flex;gap:6px;}
+.action-btn{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:0.78rem;transition:all 0.2s;}
+.action-btn:hover{border-color:var(--accent);color:var(--accent);}
+.action-btn.del:hover{border-color:var(--danger);color:var(--danger);}
 
-.user-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-  flex-shrink: 0;
-}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;width:90%;max-width:520px;animation:fadeIn 0.25s ease;position:relative;}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:3px;margin-bottom:24px;}
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:0.75rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;transition:border-color 0.2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--accent);}
+.form-textarea{min-height:100px;resize:vertical;}
+.form-select option{background:var(--surface2);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;}
+.modal-close:hover{color:var(--text);}
 
-.avatar-admin { background: linear-gradient(135deg, var(--accent), #7b4fff); }
-.avatar-colab { background: linear-gradient(135deg, var(--success), #00b8a9); }
+.roles-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.role-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;}
+.role-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;margin-bottom:4px;}
+.role-card p{font-size:0.82rem;color:var(--muted);margin-bottom:16px;}
+.perm-list{list-style:none;}
+.perm-list li{font-size:0.82rem;padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;color:var(--muted);}
+.perm-list li.yes{color:var(--text);}
+.perm-list li.yes::before{content:'✓';color:var(--success);font-weight:700;}
+.perm-list li.no::before{content:'✗';color:var(--danger);}
 
-.user-info { flex: 1; min-width: 0; }
-.user-name { font-size: 0.85rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.user-role {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  border-radius: 20px;
-  display: inline-block;
-  margin-top: 2px;
-}
-.role-admin { background: rgba(79,138,255,0.15); color: var(--accent); }
-.role-colab { background: rgba(62,207,142,0.15); color: var(--success); }
+.settings-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;}
+.settings-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
 
-.nav-section {
-  padding: 16px 12px 8px;
-}
+.alert{padding:12px 16px;border-radius:8px;font-size:0.85rem;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.alert-warning{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);color:var(--warning);}
+.alert-success{background:rgba(62,207,142,0.1);border:1px solid rgba(62,207,142,0.3);color:var(--success);}
+.alert-danger{background:rgba(255,74,74,0.1);border:1px solid rgba(255,74,74,0.3);color:var(--danger);}
 
-.nav-label {
-  font-size: 0.65rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding: 0 12px;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--muted);
-  font-size: 0.88rem;
-  font-weight: 500;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  position: relative;
-}
-
-.nav-item:hover { background: var(--surface2); color: var(--text); }
-.nav-item.active { background: rgba(79,138,255,0.12); color: var(--accent); }
-.nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 20%; bottom: 20%;
-  width: 3px;
-  background: var(--accent);
-  border-radius: 0 3px 3px 0;
-}
-
-.nav-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
-.nav-item .badge {
-  margin-left: auto;
-  background: var(--accent2);
-  color: white;
-  font-size: 0.65rem;
-  padding: 2px 7px;
-  border-radius: 20px;
-  font-weight: 700;
-}
-
-.nav-item.locked { opacity: 0.4; cursor: not-allowed; }
-.nav-item.locked:hover { background: none; color: var(--muted); }
-
-.sidebar-footer {
-  margin-top: auto;
-  padding: 16px 12px;
-  border-top: 1px solid var(--border);
-}
-
-/* ── MAIN ── */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-width: 0;
-}
-
-.topbar {
-  height: 60px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 28px;
-  gap: 16px;
-  flex-shrink: 0;
-}
-
-.topbar-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.4rem;
-  letter-spacing: 2px;
-  flex: 1;
-}
-
-.topbar-actions { display: flex; gap: 10px; align-items: center; }
-
-.btn {
-  padding: 8px 18px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.83rem;
-  font-weight: 600;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-primary { background: var(--accent); color: white; }
-.btn-primary:hover { background: #3a74e8; transform: translateY(-1px); }
-.btn-danger { background: rgba(255,74,74,0.15); color: var(--danger); border: 1px solid rgba(255,74,74,0.3); }
-.btn-danger:hover { background: rgba(255,74,74,0.25); }
-.btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-.btn-success { background: rgba(62,207,142,0.15); color: var(--success); border: 1px solid rgba(62,207,142,0.3); }
-.btn-success:hover { background: rgba(62,207,142,0.25); }
-
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 28px;
-}
-
-/* ── PANELS ── */
-.panel { display: none; animation: fadeIn 0.3s ease; }
-.panel.active { display: block; }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ── STATS ── */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 28px;
-}
-
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-
-.stat-card:hover { border-color: var(--accent); }
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-}
-
-.stat-card.blue::before { background: var(--accent); }
-.stat-card.green::before { background: var(--success); }
-.stat-card.orange::before { background: var(--accent2); }
-.stat-card.gold::before { background: var(--gold); }
-
-.stat-icon { font-size: 1.6rem; margin-bottom: 12px; }
-.stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 2px; line-height: 1; }
-.stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-
-/* ── TABLE ── */
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.section-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.3rem;
-  letter-spacing: 2px;
-}
-
-.table-wrap {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 24px;
-}
-
-table { width: 100%; border-collapse: collapse; }
-th {
-  background: var(--surface2);
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 0.72rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 600;
-}
-td {
-  padding: 13px 16px;
-  font-size: 0.85rem;
-  border-top: 1px solid var(--border);
-  vertical-align: middle;
-}
-tr:hover td { background: rgba(255,255,255,0.02); }
-
-.tag {
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-.tag-pub { background: rgba(62,207,142,0.15); color: var(--success); }
-.tag-bor { background: rgba(245,166,35,0.15); color: var(--warning); }
-.tag-adm { background: rgba(79,138,255,0.15); color: var(--accent); }
-.tag-col { background: rgba(62,207,142,0.15); color: var(--success); }
-.tag-nuevo { background: rgba(255,107,74,0.15); color: var(--accent2); }
-.tag-leido { background: rgba(107,107,128,0.15); color: var(--muted); }
-
-.actions { display: flex; gap: 6px; }
-.action-btn {
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-  font-size: 0.78rem;
-  transition: all 0.2s;
-}
-.action-btn:hover { border-color: var(--accent); color: var(--accent); }
-.action-btn.del:hover { border-color: var(--danger); color: var(--danger); }
-
-/* ── MODAL ── */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(4px);
-  z-index: 100;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-.modal-overlay.open { display: flex; }
-
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
-  width: 90%;
-  max-width: 520px;
-  animation: fadeIn 0.25s ease;
-  position: relative;
-}
-
-.modal h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 3px;
-  margin-bottom: 24px;
-}
-
-.form-group { margin-bottom: 18px; }
-.form-label {
-  display: block;
-  font-size: 0.75rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.form-input, .form-select, .form-textarea {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 14px;
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.88rem;
-  transition: border-color 0.2s;
-}
-.form-input:focus, .form-select:focus, .form-textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-.form-textarea { min-height: 100px; resize: vertical; }
-.form-select option { background: var(--surface2); }
-
-.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
-.modal-close {
-  position: absolute; top: 16px; right: 16px;
-  background: none; border: none; color: var(--muted);
-  font-size: 1.2rem; cursor: pointer;
-}
-.modal-close:hover { color: var(--text); }
-
-/* ── ROLES PANEL ── */
-.roles-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.role-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-}
-
-.role-card h3 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.2rem;
-  letter-spacing: 2px;
-  margin-bottom: 4px;
-}
-
-.role-card p { font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; }
-
-.perm-list { list-style: none; }
-.perm-list li {
-  font-size: 0.82rem;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--muted);
-}
-.perm-list li.yes { color: var(--text); }
-.perm-list li.yes::before { content: '✓'; color: var(--success); font-weight: 700; }
-.perm-list li.no::before { content: '✗'; color: var(--danger); }
-
-/* ── SETTINGS ── */
-.settings-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 16px;
-}
-.settings-section h3 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.1rem;
-  letter-spacing: 2px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.setting-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(42,42,58,0.5);
-}
-.setting-row:last-child { border-bottom: none; }
-.setting-label { font-size: 0.88rem; font-weight: 500; }
-.setting-desc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
-
-/* ── EMPTY STATE ── */
-.empty-state {
-  text-align: center;
-  padding: 48px;
-  color: var(--muted);
-}
-.empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
-.empty-state p { font-size: 0.88rem; }
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-/* ── ALERT ── */
-.alert {
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.alert-warning { background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.3); color: var(--warning); }
-.alert-success { background: rgba(62,207,142,0.1); border: 1px solid rgba(62,207,142,0.3); color: var(--success); }
-
-.chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 3px 10px; border-radius: 20px;
-  font-size: 0.72rem; font-weight: 600;
-}
-.chip-admin { background: rgba(240,192,96,0.15); color: var(--gold); }
-.chip-colab { background: rgba(62,207,142,0.15); color: var(--success); }
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;}
+.chip-admin{background:rgba(240,192,96,0.15);color:var(--gold);}
+.chip-colab{background:rgba(62,207,142,0.15);color:var(--success);}
+.loading{text-align:center;padding:32px;color:var(--muted);font-size:0.88rem;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
     <h1>JOTHERMA</h1>
-    <span>Panel de Control</span>
-  </div>
-
-  <div class="user-card">
-    <div class="user-avatar avatar-admin" id="sidebarAvatar">A</div>
-    <div class="user-info">
-      <div class="user-name" id="sidebarName">Admin</div>
-      <span class="user-role role-admin" id="sidebarRole">Administrador</span>
+    <p>Panel de Administración</p>
+    <div class="error-msg" id="loginError"></div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="loginEmail" placeholder="admin@jotherma.org">
     </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input class="form-input" type="password" id="loginPassword" placeholder="••••••••">
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px" onclick="login()" id="loginBtn">Iniciar sesión</button>
   </div>
+</div>
 
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar" style="display:none">
+  <div class="sidebar-logo"><h1>JOTHERMA</h1><span>Panel de Control</span></div>
+  <div class="user-card">
+    <div class="user-avatar" id="sidebarAvatar">A</div>
+    <div><div class="user-name" id="sidebarName">Admin</div><span class="user-role role-admin" id="sidebarRole">Administrador</span></div>
+  </div>
   <div class="nav-section">
     <div class="nav-label">General</div>
-    <button class="nav-item active" onclick="showPanel('dashboard', this)">
-      <span class="icon">📊</span> Dashboard
-    </button>
-    <button class="nav-item" onclick="showPanel('publicaciones', this)">
-      <span class="icon">📰</span> Publicaciones
-    </button>
-    <button class="nav-item" onclick="showPanel('mensajes', this)">
-      <span class="icon">✉️</span> Mensajes
-      <span class="badge" id="msgBadge">3</span>
-    </button>
-    <button class="nav-item" onclick="showPanel('voluntarios', this)">
-      <span class="icon">🤝</span> Voluntarios
-    </button>
+    <button class="nav-item active" onclick="showPanel('dashboard',this)"><span class="icon">📊</span> Dashboard</button>
+    <button class="nav-item" onclick="showPanel('publicaciones',this)"><span class="icon">📰</span> Publicaciones</button>
+    <button class="nav-item" onclick="showPanel('mensajes',this)"><span class="icon">✉️</span> Mensajes <span class="badge" id="msgBadge" style="display:none">0</span></button>
+    <button class="nav-item" onclick="showPanel('voluntarios',this)"><span class="icon">🤝</span> Voluntarios</button>
   </div>
-
-  <div class="nav-section" id="adminNav">
+  <div class="nav-section" id="adminNav" style="display:none">
     <div class="nav-label">Administrador</div>
-    <button class="nav-item" onclick="showPanel('donaciones', this)">
-      <span class="icon">💰</span> Donaciones
-    </button>
-    <button class="nav-item" onclick="showPanel('usuarios', this)">
-      <span class="icon">👥</span> Usuarios
-    </button>
-    <button class="nav-item" onclick="showPanel('configuracion', this)">
-      <span class="icon">⚙️</span> Configuración
-    </button>
+    <button class="nav-item" onclick="showPanel('donaciones',this)"><span class="icon">💰</span> Donaciones</button>
+    <button class="nav-item" onclick="showPanel('usuarios',this)"><span class="icon">👥</span> Usuarios</button>
+    <button class="nav-item" onclick="showPanel('configuracion',this)"><span class="icon">⚙️</span> Configuración</button>
   </div>
-
   <div class="sidebar-footer">
-    <button class="nav-item" onclick="showPanel('perfil', this)">
-      <span class="icon">🔑</span> Mi Perfil
-    </button>
-    <button class="nav-item" onclick="logout()">
-      <span class="icon">🚪</span> Cerrar Sesión
-    </button>
+    <button class="nav-item" onclick="showPanel('perfil',this)"><span class="icon">🔑</span> Mi Perfil</button>
+    <button class="nav-item" onclick="logout()"><span class="icon">🚪</span> Cerrar Sesión</button>
   </div>
 </aside>
 
 <!-- MAIN -->
-<div class="main">
+<div class="main" id="mainContent" style="display:none">
   <div class="topbar">
     <div class="topbar-title" id="topbarTitle">DASHBOARD</div>
-    <div class="topbar-actions">
-      <span style="font-size:0.78rem;color:var(--muted)" id="topbarDate"></span>
-    </div>
+    <div style="font-size:0.78rem;color:var(--muted)" id="topbarDate"></div>
   </div>
-
   <div class="content">
 
     <!-- DASHBOARD -->
     <div class="panel active" id="panel-dashboard">
-      <div class="alert alert-warning">
-        ⚠️ Recuerda cambiar tu contraseña por defecto en <strong>Mi Perfil</strong>.
-      </div>
-
+      <div class="alert alert-warning">⚠️ Recuerda cambiar tu contraseña por defecto en <strong>Mi Perfil</strong>.</div>
       <div class="stats-grid">
-        <div class="stat-card blue">
-          <div class="stat-icon">📰</div>
-          <div class="stat-value">12</div>
-          <div class="stat-label">Publicaciones</div>
-        </div>
-        <div class="stat-card orange">
-          <div class="stat-icon">✉️</div>
-          <div class="stat-value">3</div>
-          <div class="stat-label">Mensajes nuevos</div>
-        </div>
-        <div class="stat-card green">
-          <div class="stat-icon">🤝</div>
-          <div class="stat-value">28</div>
-          <div class="stat-label">Voluntarios</div>
-        </div>
-        <div class="stat-card gold">
-          <div class="stat-icon">💰</div>
-          <div class="stat-value">$4.2M</div>
-          <div class="stat-label">Donaciones</div>
-        </div>
-      </div>
-
-      <div class="section-header">
-        <div class="section-title">ACTIVIDAD RECIENTE</div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Actividad</th><th>Usuario</th><th>Fecha</th><th>Estado</th></tr></thead>
-          <tbody>
-            <tr><td>Nueva publicación creada</td><td>admin@jotherma.org</td><td>Hoy 09:30</td><td><span class="tag tag-pub">Publicado</span></td></tr>
-            <tr><td>Mensaje de contacto recibido</td><td>Sistema</td><td>Hoy 08:15</td><td><span class="tag tag-nuevo">Nuevo</span></td></tr>
-            <tr><td>Voluntario registrado</td><td>Sistema</td><td>Ayer 17:40</td><td><span class="tag tag-pub">Activo</span></td></tr>
-            <tr><td>Donación recibida</td><td>Sistema</td><td>Ayer 14:20</td><td><span class="tag tag-pub">Confirmada</span></td></tr>
-          </tbody>
-        </table>
+        <div class="stat-card blue"><div class="stat-icon">📰</div><div class="stat-value" id="statPublicaciones">—</div><div class="stat-label">Publicaciones</div></div>
+        <div class="stat-card orange"><div class="stat-icon">✉️</div><div class="stat-value" id="statMensajes">—</div><div class="stat-label">Mensajes nuevos</div></div>
+        <div class="stat-card green"><div class="stat-icon">🤝</div><div class="stat-value" id="statVoluntarios">—</div><div class="stat-label">Voluntarios</div></div>
+        <div class="stat-card gold" id="statDonCard" style="display:none"><div class="stat-icon">💰</div><div class="stat-value" id="statDonaciones">—</div><div class="stat-label">Total donaciones</div></div>
       </div>
     </div>
 
@@ -621,189 +195,40 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     <div class="panel" id="panel-publicaciones">
       <div class="section-header">
         <div class="section-title">PUBLICACIONES</div>
-        <button class="btn btn-primary" onclick="openModal('modalPublicacion')">+ Nueva Publicación</button>
+        <button class="btn btn-primary" onclick="abrirNuevaPublicacion()">+ Nueva Publicación</button>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Título</th><th>Categoría</th><th>Autor</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>Campaña de alimentación comunidad norte</td>
-              <td>Comunidad</td>
-              <td>Admin</td>
-              <td>Feb 18, 2026</td>
-              <td><span class="tag tag-pub">Publicado</span></td>
-              <td><div class="actions">
-                <button class="action-btn" onclick="editarPublicacion(this)">✏️ Editar</button>
-                <button class="action-btn del" onclick="confirmarEliminar('publicación')">🗑 Eliminar</button>
-              </div></td>
-            </tr>
-            <tr>
-              <td>Resultados jornada de salud 2026</td>
-              <td>Salud</td>
-              <td>Colaborador</td>
-              <td>Feb 15, 2026</td>
-              <td><span class="tag tag-bor">Borrador</span></td>
-              <td><div class="actions">
-                <button class="action-btn">✏️ Editar</button>
-                <button class="action-btn del" onclick="confirmarEliminar('publicación')">🗑 Eliminar</button>
-              </div></td>
-            </tr>
-            <tr>
-              <td>Convocatoria voluntarios 2026</td>
-              <td>Voluntariado</td>
-              <td>Admin</td>
-              <td>Feb 10, 2026</td>
-              <td><span class="tag tag-pub">Publicado</span></td>
-              <td><div class="actions">
-                <button class="action-btn">✏️ Editar</button>
-                <button class="action-btn del" onclick="confirmarEliminar('publicación')">🗑 Eliminar</button>
-              </div></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Título</th><th>Categoría</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaPublicaciones"><tr><td colspan="5" class="loading">Cargando...</td></tr></tbody>
+      </table></div>
     </div>
 
     <!-- MENSAJES -->
     <div class="panel" id="panel-mensajes">
-      <div class="section-header">
-        <div class="section-title">MENSAJES DE CONTACTO</div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Nombre</th><th>Email</th><th>Asunto</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>María García</td>
-              <td>maria@email.com</td>
-              <td>Información sobre donaciones</td>
-              <td>Hoy 08:15</td>
-              <td><span class="tag tag-nuevo">Nuevo</span></td>
-              <td><div class="actions">
-                <button class="action-btn" onclick="verMensaje('María García','maria@email.com','Información sobre donaciones','Hola, me gustaría saber cómo puedo hacer una donación a la fundación. Gracias.')">👁 Ver</button>
-                <button class="action-btn del" onclick="confirmarEliminar('mensaje')">🗑</button>
-              </div></td>
-            </tr>
-            <tr>
-              <td>Carlos López</td>
-              <td>carlos@email.com</td>
-              <td>Quiero ser voluntario</td>
-              <td>Feb 18, 2026</td>
-              <td><span class="tag tag-nuevo">Nuevo</span></td>
-              <td><div class="actions">
-                <button class="action-btn" onclick="verMensaje('Carlos López','carlos@email.com','Quiero ser voluntario','Estoy interesado en participar como voluntario en sus programas comunitarios.')">👁 Ver</button>
-                <button class="action-btn del" onclick="confirmarEliminar('mensaje')">🗑</button>
-              </div></td>
-            </tr>
-            <tr>
-              <td>Ana Martínez</td>
-              <td>ana@email.com</td>
-              <td>Alianza institucional</td>
-              <td>Feb 17, 2026</td>
-              <td><span class="tag tag-nuevo">Nuevo</span></td>
-              <td><div class="actions">
-                <button class="action-btn" onclick="verMensaje('Ana Martínez','ana@email.com','Alianza institucional','Representamos a una empresa que desea establecer una alianza con su fundación.')">👁 Ver</button>
-                <button class="action-btn del" onclick="confirmarEliminar('mensaje')">🗑</button>
-              </div></td>
-            </tr>
-            <tr>
-              <td>Pedro Ruiz</td>
-              <td>pedro@email.com</td>
-              <td>Consulta general</td>
-              <td>Feb 10, 2026</td>
-              <td><span class="tag tag-leido">Leído</span></td>
-              <td><div class="actions">
-                <button class="action-btn">👁 Ver</button>
-                <button class="action-btn del" onclick="confirmarEliminar('mensaje')">🗑</button>
-              </div></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="section-header"><div class="section-title">MENSAJES DE CONTACTO</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Nombre</th><th>Email</th><th>Mensaje</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaMensajes"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
+      </table></div>
     </div>
 
     <!-- VOLUNTARIOS -->
     <div class="panel" id="panel-voluntarios">
-      <div class="section-header">
-        <div class="section-title">VOLUNTARIOS</div>
-        <button class="btn btn-primary" onclick="openModal('modalVoluntario')">+ Agregar Voluntario</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Nombre</th><th>Email</th><th>Área</th><th>Fecha registro</th><th>Estado</th><th>Acciones</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>Lucía Hernández</td>
-              <td>lucia@email.com</td>
-              <td>Educación</td>
-              <td>Feb 15, 2026</td>
-              <td><span class="tag tag-pub">Activo</span></td>
-              <td><div class="actions">
-                <button class="action-btn">✏️ Editar</button>
-                <button class="action-btn del" onclick="confirmarEliminar('voluntario')">🗑</button>
-              </div></td>
-            </tr>
-            <tr>
-              <td>Juan Moreno</td>
-              <td>juan@email.com</td>
-              <td>Salud</td>
-              <td>Feb 10, 2026</td>
-              <td><span class="tag tag-pub">Activo</span></td>
-              <td><div class="actions">
-                <button class="action-btn">✏️ Editar</button>
-                <button class="action-btn del" onclick="confirmarEliminar('voluntario')">🗑</button>
-              </div></td>
-            </tr>
-            <tr>
-              <td>Sofia Vargas</td>
-              <td>sofia@email.com</td>
-              <td>Comunidad</td>
-              <td>Feb 5, 2026</td>
-              <td><span class="tag tag-bor">Pendiente</span></td>
-              <td><div class="actions">
-                <button class="action-btn">✏️ Editar</button>
-                <button class="action-btn del" onclick="confirmarEliminar('voluntario')">🗑</button>
-              </div></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="section-header"><div class="section-title">VOLUNTARIOS</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Nombre</th><th>Email</th><th>Área</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaVoluntarios"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
+      </table></div>
     </div>
 
-    <!-- DONACIONES (solo admin) -->
+    <!-- DONACIONES -->
     <div class="panel" id="panel-donaciones">
-      <div class="section-header">
-        <div class="section-title">💰 DONACIONES</div>
-      </div>
-      <div class="stats-grid" style="grid-template-columns: repeat(3,1fr)">
-        <div class="stat-card gold">
-          <div class="stat-icon">📅</div>
-          <div class="stat-value">$850K</div>
-          <div class="stat-label">Este mes</div>
-        </div>
-        <div class="stat-card gold">
-          <div class="stat-icon">📈</div>
-          <div class="stat-value">$4.2M</div>
-          <div class="stat-label">Este año</div>
-        </div>
-        <div class="stat-card gold">
-          <div class="stat-icon">👤</div>
-          <div class="stat-value">47</div>
-          <div class="stat-label">Donantes</div>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Donante</th><th>Monto</th><th>Método</th><th>Fecha</th><th>Estado</th></tr></thead>
-          <tbody>
-            <tr><td>Empresa XYZ S.A.S</td><td><strong>$500,000</strong></td><td>Transferencia</td><td>Feb 18, 2026</td><td><span class="tag tag-pub">Confirmada</span></td></tr>
-            <tr><td>Anónimo</td><td><strong>$150,000</strong></td><td>Nequi</td><td>Feb 17, 2026</td><td><span class="tag tag-pub">Confirmada</span></td></tr>
-            <tr><td>María Rodríguez</td><td><strong>$200,000</strong></td><td>PSE</td><td>Feb 15, 2026</td><td><span class="tag tag-pub">Confirmada</span></td></tr>
-            <tr><td>Fundación Solidaria</td><td><strong>$1,000,000</strong></td><td>Cheque</td><td>Feb 10, 2026</td><td><span class="tag tag-bor">Pendiente</span></td></tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="section-header"><div class="section-title">💰 DONACIONES</div></div>
+      <div id="statsDonaciones" class="stats-grid" style="grid-template-columns:repeat(3,1fr)"></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Donante</th><th>Monto</th><th>Método</th><th>Fecha</th><th>Estado</th></tr></thead>
+        <tbody id="tablaDonaciones"><tr><td colspan="5" class="loading">Cargando...</td></tr></tbody>
+      </table></div>
     </div>
 
     <!-- USUARIOS -->
@@ -812,155 +237,72 @@ tr:hover td { background: rgba(255,255,255,0.02); }
         <div class="section-title">GESTIÓN DE USUARIOS</div>
         <button class="btn btn-primary" onclick="openModal('modalUsuario')">+ Nuevo Usuario</button>
       </div>
-
       <div class="roles-grid">
-        <div class="role-card">
-          <h3>👑 Administrador</h3>
-          <p>Acceso total al sistema</p>
-          <ul class="perm-list">
-            <li class="yes">Ver y editar publicaciones</li>
-            <li class="yes">Ver mensajes de contacto</li>
-            <li class="yes">Ver donaciones y finanzas</li>
-            <li class="yes">Gestionar voluntarios</li>
-            <li class="yes">Crear y eliminar usuarios</li>
-            <li class="yes">Configurar el sitio</li>
-          </ul>
+        <div class="role-card"><h3>👑 Administrador</h3><p>Acceso total al sistema</p>
+          <ul class="perm-list"><li class="yes">Ver y editar publicaciones</li><li class="yes">Ver mensajes</li><li class="yes">Ver donaciones y finanzas</li><li class="yes">Gestionar voluntarios</li><li class="yes">Crear/eliminar usuarios</li><li class="yes">Configurar el sitio</li></ul>
         </div>
-        <div class="role-card">
-          <h3>🤝 Colaborador</h3>
-          <p>Acceso limitado a contenido</p>
-          <ul class="perm-list">
-            <li class="yes">Ver y editar publicaciones</li>
-            <li class="yes">Ver mensajes de contacto</li>
-            <li class="no">Ver donaciones y finanzas</li>
-            <li class="yes">Ver voluntarios</li>
-            <li class="no">Crear o eliminar usuarios</li>
-            <li class="no">Configurar el sitio</li>
-          </ul>
+        <div class="role-card"><h3>🤝 Colaborador</h3><p>Acceso limitado</p>
+          <ul class="perm-list"><li class="yes">Ver y editar publicaciones</li><li class="yes">Ver mensajes</li><li class="no">Ver donaciones y finanzas</li><li class="yes">Ver voluntarios</li><li class="no">Crear/eliminar usuarios</li><li class="no">Configurar el sitio</li></ul>
         </div>
       </div>
-
-      <div class="section-header">
-        <div class="section-title">USUARIOS ACTIVOS</div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Último acceso</th><th>Acciones</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><strong>Admin Principal</strong></td>
-              <td>admin@jotherma.org</td>
-              <td><span class="chip chip-admin">👑 Administrador</span></td>
-              <td>Hoy 09:57</td>
-              <td><div class="actions"><button class="action-btn">✏️ Editar</button></div></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="section-header"><div class="section-title">USUARIOS ACTIVOS</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Último acceso</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaUsuarios"><tr><td colspan="5" class="loading">Cargando...</td></tr></tbody>
+      </table></div>
     </div>
 
     <!-- CONFIGURACIÓN -->
     <div class="panel" id="panel-configuracion">
       <div class="section-header">
         <div class="section-title">CONFIGURACIÓN DEL SITIO</div>
-        <button class="btn btn-primary" onclick="guardarConfig()">💾 Guardar Cambios</button>
+        <button class="btn btn-primary" onclick="guardarConfig()">💾 Guardar</button>
       </div>
-
       <div class="settings-section">
         <h3>INFORMACIÓN DE LA FUNDACIÓN</h3>
-        <div class="form-group">
-          <label class="form-label">Nombre de la Fundación</label>
-          <input class="form-input" value="Fundación JOTHERMA">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Misión</label>
-          <textarea class="form-textarea">Trabajamos por el bienestar y desarrollo de nuestra comunidad, brindando apoyo social, educativo y de salud a las familias más vulnerables.</textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email de contacto</label>
-          <input class="form-input" value="contacto@jotherma.org">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Teléfono</label>
-          <input class="form-input" value="+57 300 000 0000">
-        </div>
+        <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" id="confNombre"></div>
+        <div class="form-group"><label class="form-label">Misión</label><textarea class="form-textarea" id="confMision"></textarea></div>
+        <div class="form-group"><label class="form-label">Email de contacto</label><input class="form-input" id="confEmail"></div>
+        <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="confTelefono"></div>
       </div>
-
       <div class="settings-section">
         <h3>REDES SOCIALES</h3>
-        <div class="form-group">
-          <label class="form-label">Facebook</label>
-          <input class="form-input" placeholder="https://facebook.com/jotherma">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Instagram</label>
-          <input class="form-input" placeholder="https://instagram.com/jotherma">
-        </div>
-        <div class="form-group">
-          <label class="form-label">WhatsApp</label>
-          <input class="form-input" placeholder="+57 300 000 0000">
-        </div>
+        <div class="form-group"><label class="form-label">Facebook</label><input class="form-input" id="confFacebook"></div>
+        <div class="form-group"><label class="form-label">Instagram</label><input class="form-input" id="confInstagram"></div>
+        <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-input" id="confWhatsapp"></div>
       </div>
     </div>
 
     <!-- PERFIL -->
     <div class="panel" id="panel-perfil">
-      <div class="section-header">
-        <div class="section-title">MI PERFIL</div>
-      </div>
+      <div class="section-header"><div class="section-title">MI PERFIL</div></div>
       <div class="settings-section">
         <h3>CAMBIAR CONTRASEÑA</h3>
-        <div class="alert alert-warning">⚠️ Cambia la contraseña por defecto <strong>CambiaEstoInmediatamente123!</strong> lo antes posible.</div>
-        <div class="form-group">
-          <label class="form-label">Contraseña actual</label>
-          <input class="form-input" type="password" placeholder="••••••••••••">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Nueva contraseña</label>
-          <input class="form-input" type="password" id="nuevaPass" placeholder="Mínimo 8 caracteres">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Confirmar nueva contraseña</label>
-          <input class="form-input" type="password" id="confirmaPass" placeholder="Repite la nueva contraseña">
-        </div>
+        <div class="alert alert-warning">⚠️ Si aún usas la contraseña por defecto, cámbiala ahora.</div>
+        <div id="passMsg"></div>
+        <div class="form-group"><label class="form-label">Contraseña actual</label><input class="form-input" type="password" id="passActual"></div>
+        <div class="form-group"><label class="form-label">Nueva contraseña</label><input class="form-input" type="password" id="passNueva"></div>
+        <div class="form-group"><label class="form-label">Confirmar nueva contraseña</label><input class="form-input" type="password" id="passConfirma"></div>
         <button class="btn btn-primary" onclick="cambiarPassword()">🔑 Actualizar Contraseña</button>
       </div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
+  </div>
+</div>
 
-<!-- ── MODALS ── -->
-
-<!-- Modal Nueva Publicación -->
+<!-- MODALS -->
 <div class="modal-overlay" id="modalPublicacion">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modalPublicacion')">✕</button>
-    <h2>NUEVA PUBLICACIÓN</h2>
-    <div class="form-group">
-      <label class="form-label">Título</label>
-      <input class="form-input" placeholder="Título de la publicación">
+    <h2 id="modalPubTitle">NUEVA PUBLICACIÓN</h2>
+    <input type="hidden" id="pubId">
+    <div class="form-group"><label class="form-label">Título</label><input class="form-input" id="pubTitulo"></div>
+    <div class="form-group"><label class="form-label">Categoría</label>
+      <select class="form-select" id="pubCategoria"><option>Comunidad</option><option>Educación</option><option>Salud</option><option>Voluntariado</option><option>Noticias</option></select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Categoría</label>
-      <select class="form-select">
-        <option>Comunidad</option>
-        <option>Educación</option>
-        <option>Salud</option>
-        <option>Voluntariado</option>
-        <option>Noticias</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Contenido</label>
-      <textarea class="form-textarea" placeholder="Escribe el contenido de la publicación..."></textarea>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Estado</label>
-      <select class="form-select">
-        <option>Publicado</option>
-        <option>Borrador</option>
-      </select>
+    <div class="form-group"><label class="form-label">Contenido</label><textarea class="form-textarea" id="pubContenido"></textarea></div>
+    <div class="form-group"><label class="form-label">Estado</label>
+      <select class="form-select" id="pubEstado"><option value="publicado">Publicado</option><option value="borrador">Borrador</option></select>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('modalPublicacion')">Cancelar</button>
@@ -969,224 +311,360 @@ tr:hover td { background: rgba(255,255,255,0.02); }
   </div>
 </div>
 
-<!-- Modal Ver Mensaje -->
 <div class="modal-overlay" id="modalMensaje">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modalMensaje')">✕</button>
     <h2>MENSAJE</h2>
-    <div style="margin-bottom:16px">
-      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px">DE</div>
-      <div id="msgNombre" style="font-weight:600"></div>
-      <div id="msgEmail" style="font-size:0.82rem;color:var(--muted)"></div>
-    </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px">ASUNTO</div>
-      <div id="msgAsunto" style="font-weight:600"></div>
-    </div>
-    <div>
-      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px">MENSAJE</div>
-      <div id="msgContenido" style="background:var(--surface2);padding:16px;border-radius:8px;font-size:0.88rem;line-height:1.6"></div>
-    </div>
+    <div style="margin-bottom:16px"><div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px">DE</div><div id="msgNombre" style="font-weight:600"></div><div id="msgEmailVal" style="font-size:0.82rem;color:var(--muted)"></div></div>
+    <div style="margin-bottom:16px"><div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px">ASUNTO</div><div id="msgAsunto" style="font-weight:600"></div></div>
+    <div><div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px">MENSAJE</div><div id="msgContenido" style="background:var(--surface2);padding:16px;border-radius:8px;font-size:0.88rem;line-height:1.6"></div></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('modalMensaje')">Cerrar</button>
-      <button class="btn btn-primary" onclick="window.location.href='mailto:'+document.getElementById('msgEmail').textContent">📧 Responder</button>
+      <button class="btn btn-primary" id="btnResponder">📧 Responder</button>
     </div>
   </div>
 </div>
 
-<!-- Modal Nuevo Usuario -->
 <div class="modal-overlay" id="modalUsuario">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modalUsuario')">✕</button>
     <h2>NUEVO USUARIO</h2>
-    <div class="form-group">
-      <label class="form-label">Nombre completo</label>
-      <input class="form-input" placeholder="Nombre del usuario">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input class="form-input" type="email" placeholder="email@jotherma.org">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Contraseña inicial</label>
-      <input class="form-input" type="password" placeholder="Mínimo 8 caracteres">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Rol</label>
-      <select class="form-select">
-        <option value="colaborador">🤝 Colaborador — Acceso limitado</option>
-        <option value="admin">👑 Administrador — Acceso total</option>
-      </select>
+    <div id="usuMsg"></div>
+    <div class="form-group"><label class="form-label">Nombre completo</label><input class="form-input" id="usuNombre"></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="usuEmail"></div>
+    <div class="form-group"><label class="form-label">Contraseña inicial</label><input class="form-input" type="password" id="usuPassword"></div>
+    <div class="form-group"><label class="form-label">Rol</label>
+      <select class="form-select" id="usuRol"><option value="editor">🤝 Colaborador</option><option value="superadmin">👑 Administrador</option></select>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('modalUsuario')">Cancelar</button>
-      <button class="btn btn-primary" onclick="crearUsuario()">✅ Crear Usuario</button>
+      <button class="btn btn-primary" onclick="crearUsuario()">✅ Crear</button>
     </div>
   </div>
 </div>
 
-<!-- Modal Voluntario -->
-<div class="modal-overlay" id="modalVoluntario">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('modalVoluntario')">✕</button>
-    <h2>AGREGAR VOLUNTARIO</h2>
-    <div class="form-group">
-      <label class="form-label">Nombre completo</label>
-      <input class="form-input" placeholder="Nombre del voluntario">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input class="form-input" type="email" placeholder="correo@email.com">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Área de interés</label>
-      <select class="form-select">
-        <option>Educación</option>
-        <option>Salud</option>
-        <option>Comunidad</option>
-        <option>Administración</option>
-        <option>Comunicaciones</option>
-      </select>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modalVoluntario')">Cancelar</button>
-      <button class="btn btn-primary" onclick="crearVoluntario()">✅ Agregar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Confirmar Eliminar -->
 <div class="modal-overlay" id="modalEliminar">
-  <div class="modal" style="max-width:380px;text-align:center">
+  <div class="modal" style="max-width:360px;text-align:center">
     <div style="font-size:2.5rem;margin-bottom:12px">🗑️</div>
     <h2 style="margin-bottom:8px">ELIMINAR</h2>
-    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:24px">¿Estás seguro de que deseas eliminar este <span id="eliminarTipo"></span>? Esta acción no se puede deshacer.</p>
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:24px">Esta acción no se puede deshacer.</p>
     <div class="modal-actions" style="justify-content:center">
       <button class="btn btn-ghost" onclick="closeModal('modalEliminar')">Cancelar</button>
-      <button class="btn btn-danger" onclick="closeModal('modalEliminar')">🗑 Eliminar</button>
+      <button class="btn btn-danger" id="btnConfEliminar">🗑 Eliminar</button>
     </div>
   </div>
 </div>
 
 <script>
-// Estado de sesión simulado
-const session = {
-  nombre: 'Admin Principal',
-  email: 'admin@jotherma.org',
-  rol: 'admin' // 'admin' o 'colaborador'
-};
+const API='';
+let token=localStorage.getItem('jotherma_token');
+let currentUser=null;
 
-// Inicializar
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('sidebarName').textContent = session.nombre;
-  document.getElementById('sidebarAvatar').textContent = session.nombre[0].toUpperCase();
+function authH(){return{'Content-Type':'application/json','Authorization':'Bearer '+token};}
 
-  if (session.rol === 'colaborador') {
-    document.getElementById('adminNav').style.display = 'none';
-    document.getElementById('sidebarRole').textContent = 'Colaborador';
-    document.getElementById('sidebarRole').className = 'user-role role-colab';
-    document.getElementById('sidebarAvatar').className = 'user-avatar avatar-colab';
-  }
-
-  // Fecha en topbar
-  const now = new Date();
-  document.getElementById('topbarDate').textContent = now.toLocaleDateString('es-CO', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-  });
-});
-
-function showPanel(id, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
-  if (btn) btn.classList.add('active');
-  document.getElementById('topbarTitle').textContent = {
-    dashboard: 'Dashboard',
-    publicaciones: 'Publicaciones',
-    mensajes: 'Mensajes',
-    voluntarios: 'Voluntarios',
-    donaciones: 'Donaciones',
-    usuarios: 'Usuarios',
-    configuracion: 'Configuración',
-    perfil: 'Mi Perfil'
-  }[id] || id.toUpperCase();
+async function login(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  const btn=document.getElementById('loginBtn');
+  const err=document.getElementById('loginError');
+  err.style.display='none'; btn.textContent='Ingresando...'; btn.disabled=true;
+  try{
+    const res=await fetch(API+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password}),credentials:'include'});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.message||'Error al iniciar sesión');
+    token=data.token; localStorage.setItem('jotherma_token',token); currentUser=data.usuario;
+    iniciarPanel();
+  }catch(e){err.textContent=e.message;err.style.display='flex';}
+  finally{btn.textContent='Iniciar sesión';btn.disabled=false;}
 }
 
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-function verMensaje(nombre, email, asunto, contenido) {
-  document.getElementById('msgNombre').textContent = nombre;
-  document.getElementById('msgEmail').textContent = email;
-  document.getElementById('msgAsunto').textContent = asunto;
-  document.getElementById('msgContenido').textContent = contenido;
-  openModal('modalMensaje');
+async function verificarSesion(){
+  if(!token)return false;
+  try{
+    const res=await fetch(API+'/api/auth/verify',{headers:authH(),credentials:'include'});
+    if(!res.ok){token=null;localStorage.removeItem('jotherma_token');return false;}
+    currentUser=(await res.json()).usuario; return true;
+  }catch{return false;}
 }
 
-function confirmarEliminar(tipo) {
-  document.getElementById('eliminarTipo').textContent = tipo;
-  openModal('modalEliminar');
+async function logout(){
+  try{await fetch(API+'/api/auth/logout',{method:'POST',headers:authH(),credentials:'include'});}catch{}
+  localStorage.removeItem('jotherma_token'); location.reload();
 }
 
-function guardarPublicacion() {
-  closeModal('modalPublicacion');
-  mostrarExito('Publicación guardada exitosamente');
+function iniciarPanel(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('sidebar').style.display='flex';
+  document.getElementById('mainContent').style.display='flex';
+  document.getElementById('sidebarName').textContent=currentUser.nombre;
+  document.getElementById('sidebarAvatar').textContent=currentUser.nombre[0].toUpperCase();
+  const esAdmin=['superadmin','admin'].includes(currentUser.rol);
+  if(esAdmin){document.getElementById('adminNav').style.display='block';document.getElementById('statDonCard').style.display='block';}
+  else{document.getElementById('sidebarRole').textContent='Colaborador';document.getElementById('sidebarRole').className='user-role role-colab';}
+  document.getElementById('topbarDate').textContent=new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  cargarDashboard();
 }
 
-function crearUsuario() {
-  closeModal('modalUsuario');
-  mostrarExito('Usuario creado exitosamente');
+function showPanel(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  const t={dashboard:'Dashboard',publicaciones:'Publicaciones',mensajes:'Mensajes',voluntarios:'Voluntarios',donaciones:'Donaciones',usuarios:'Usuarios',configuracion:'Configuración',perfil:'Mi Perfil'};
+  document.getElementById('topbarTitle').textContent=(t[id]||id).toUpperCase();
+  if(id==='publicaciones')cargarPublicaciones();
+  if(id==='mensajes')cargarMensajes();
+  if(id==='voluntarios')cargarVoluntarios();
+  if(id==='donaciones')cargarDonaciones();
+  if(id==='usuarios')cargarUsuarios();
+  if(id==='configuracion')cargarConfiguracion();
 }
 
-function crearVoluntario() {
-  closeModal('modalVoluntario');
-  mostrarExito('Voluntario agregado exitosamente');
+async function api(url,opts={}){
+  const res=await fetch(API+url,{headers:authH(),credentials:'include',...opts});
+  return res.json();
 }
 
-function guardarConfig() {
-  mostrarExito('Configuración guardada exitosamente');
+async function cargarDashboard(){
+  try{
+    const[p,m,v]=await Promise.all([api('/api/publicaciones'),api('/api/mensajes'),api('/api/voluntarios')]);
+    document.getElementById('statPublicaciones').textContent=p.publicaciones?.length||0;
+    const nuevos=m.mensajes?.filter(x=>x.estado==='nuevo').length||0;
+    document.getElementById('statMensajes').textContent=nuevos;
+    document.getElementById('statVoluntarios').textContent=v.voluntarios?.length||0;
+    if(nuevos>0){document.getElementById('msgBadge').textContent=nuevos;document.getElementById('msgBadge').style.display='inline';}
+    if(['superadmin','admin'].includes(currentUser.rol)){
+      const d=await api('/api/donaciones');
+      const tot=d.donaciones?.reduce((a,x)=>a+(parseFloat(x.monto)||0),0)||0;
+      document.getElementById('statDonaciones').textContent='$'+tot.toLocaleString('es-CO');
+    }
+  }catch(e){console.error(e);}
 }
 
-function cambiarPassword() {
-  const np = document.getElementById('nuevaPass').value;
-  const cp = document.getElementById('confirmaPass').value;
-  if (!np || np.length < 8) { alert('La contraseña debe tener mínimo 8 caracteres'); return; }
-  if (np !== cp) { alert('Las contraseñas no coinciden'); return; }
-  mostrarExito('Contraseña actualizada exitosamente');
+async function cargarPublicaciones(){
+  const tb=document.getElementById('tablaPublicaciones');
+  tb.innerHTML='<tr><td colspan="5" class="loading">Cargando...</td></tr>';
+  try{
+    const d=await api('/api/publicaciones');
+    const rows=d.publicaciones||[];
+    if(!rows.length){tb.innerHTML='<tr><td colspan="5" class="loading">No hay publicaciones</td></tr>';return;}
+    tb.innerHTML=rows.map(p=>`<tr>
+      <td><strong>${esc(p.titulo)}</strong></td>
+      <td>${esc(p.categoria||'—')}</td>
+      <td><span class="tag ${p.estado==='publicado'?'tag-pub':'tag-bor'}">${p.estado||'borrador'}</span></td>
+      <td>${fmt(p.creado_en)}</td>
+      <td><div class="actions">
+        <button class="action-btn" onclick='editarPub(${JSON.stringify(p)})'>✏️ Editar</button>
+        <button class="action-btn del" onclick="confirmar(()=>eliminarPub(${p.id}))">🗑</button>
+      </div></td></tr>`).join('');
+  }catch{tb.innerHTML='<tr><td colspan="5" class="loading">Error al cargar</td></tr>';}
 }
 
-function editarPublicacion(btn) {
+function abrirNuevaPublicacion(){
+  document.getElementById('modalPubTitle').textContent='NUEVA PUBLICACIÓN';
+  document.getElementById('pubId').value='';
+  document.getElementById('pubTitulo').value='';
+  document.getElementById('pubContenido').value='';
+  document.getElementById('pubEstado').value='publicado';
   openModal('modalPublicacion');
 }
 
-function logout() {
-  if (confirm('¿Cerrar sesión?')) {
-    window.location.href = '/admin.html';
-  }
+function editarPub(p){
+  document.getElementById('modalPubTitle').textContent='EDITAR PUBLICACIÓN';
+  document.getElementById('pubId').value=p.id;
+  document.getElementById('pubTitulo').value=p.titulo||'';
+  document.getElementById('pubCategoria').value=p.categoria||'Comunidad';
+  document.getElementById('pubContenido').value=p.contenido||'';
+  document.getElementById('pubEstado').value=p.estado||'borrador';
+  openModal('modalPublicacion');
 }
 
-function mostrarExito(msg) {
-  const el = document.createElement('div');
-  el.className = 'alert alert-success';
-  el.style.cssText = 'position:fixed;top:20px;right:20px;z-index:999;max-width:320px;animation:fadeIn 0.3s ease';
-  el.innerHTML = '✅ ' + msg;
+async function guardarPublicacion(){
+  const id=document.getElementById('pubId').value;
+  const body={titulo:document.getElementById('pubTitulo').value,contenido:document.getElementById('pubContenido').value,categoria:document.getElementById('pubCategoria').value,estado:document.getElementById('pubEstado').value};
+  try{
+    const url=id?`/api/publicaciones/${id}`:'/api/publicaciones';
+    const method=id?'PUT':'POST';
+    const res=await fetch(API+url,{method,headers:authH(),body:JSON.stringify(body),credentials:'include'});
+    if(!res.ok)throw new Error();
+    closeModal('modalPublicacion');toast('Publicación guardada');cargarPublicaciones();
+  }catch{toast('Error al guardar','danger');}
+}
+
+async function eliminarPub(id){
+  try{await fetch(API+'/api/publicaciones/'+id,{method:'DELETE',headers:authH(),credentials:'include'});toast('Publicación eliminada');cargarPublicaciones();}
+  catch{toast('Error al eliminar','danger');}
+}
+
+async function cargarMensajes(){
+  const tb=document.getElementById('tablaMensajes');
+  tb.innerHTML='<tr><td colspan="6" class="loading">Cargando...</td></tr>';
+  try{
+    const d=await api('/api/mensajes');
+    const rows=d.mensajes||[];
+    if(!rows.length){tb.innerHTML='<tr><td colspan="6" class="loading">No hay mensajes</td></tr>';return;}
+    tb.innerHTML=rows.map(m=>`<tr>
+      <td><strong>${esc(m.nombre)}</strong></td>
+      <td>${esc(m.email)}</td>
+      <td>${esc((m.mensaje||'').substring(0,50))}...</td>
+      <td>${fmt(m.creado_en)}</td>
+      <td><span class="tag ${m.estado==='nuevo'?'tag-nuevo':'tag-leido'}">${m.estado||'nuevo'}</span></td>
+      <td><div class="actions">
+        <button class="action-btn" onclick='verMsg(${JSON.stringify(m)})'>👁 Ver</button>
+      </div></td></tr>`).join('');
+  }catch{tb.innerHTML='<tr><td colspan="6" class="loading">Error al cargar</td></tr>';}
+}
+
+function verMsg(m){
+  document.getElementById('msgNombre').textContent=m.nombre;
+  document.getElementById('msgEmailVal').textContent=m.email;
+  document.getElementById('msgAsunto').textContent=m.asunto||'(Sin asunto)';
+  document.getElementById('msgContenido').textContent=m.mensaje||m.contenido||'';
+  document.getElementById('btnResponder').onclick=()=>window.location.href='mailto:'+m.email;
+  openModal('modalMensaje');
+  if(m.estado==='nuevo')fetch(API+'/api/mensajes/'+m.id+'/estado',{method:'PATCH',headers:authH(),body:JSON.stringify({estado:'leido'}),credentials:'include'}).then(()=>cargarMensajes());
+}
+
+async function cargarVoluntarios(){
+  const tb=document.getElementById('tablaVoluntarios');
+  tb.innerHTML='<tr><td colspan="6" class="loading">Cargando...</td></tr>';
+  try{
+    const d=await api('/api/voluntarios');
+    const rows=d.voluntarios||[];
+    if(!rows.length){tb.innerHTML='<tr><td colspan="6" class="loading">No hay voluntarios</td></tr>';return;}
+    tb.innerHTML=rows.map(v=>`<tr>
+      <td><strong>${esc(v.nombre)}</strong></td>
+      <td>${esc(v.email)}</td>
+      <td>${esc(v.area||v.interes||'—')}</td>
+      <td><span class="tag ${v.estado==='activo'?'tag-pub':'tag-bor'}">${v.estado||'pendiente'}</span></td>
+      <td>${fmt(v.creado_en)}</td>
+      <td><div class="actions">
+        ${v.estado!=='activo'?`<button class="action-btn" onclick="activarVol(${v.id})">✓ Activar</button>`:''}
+      </div></td></tr>`).join('');
+  }catch{tb.innerHTML='<tr><td colspan="6" class="loading">Error al cargar</td></tr>';}
+}
+
+async function activarVol(id){
+  try{await fetch(API+'/api/voluntarios/'+id+'/estado',{method:'PATCH',headers:authH(),body:JSON.stringify({estado:'activo'}),credentials:'include'});toast('Voluntario activado');cargarVoluntarios();}
+  catch{toast('Error','danger');}
+}
+
+async function cargarDonaciones(){
+  const tb=document.getElementById('tablaDonaciones');
+  tb.innerHTML='<tr><td colspan="5" class="loading">Cargando...</td></tr>';
+  try{
+    const d=await api('/api/donaciones');
+    const rows=d.donaciones||[];
+    const tot=rows.reduce((a,x)=>a+(parseFloat(x.monto)||0),0);
+    const mes=rows.filter(x=>new Date(x.creado_en).getMonth()===new Date().getMonth()).reduce((a,x)=>a+(parseFloat(x.monto)||0),0);
+    document.getElementById('statsDonaciones').innerHTML=`
+      <div class="stat-card gold"><div class="stat-icon">📅</div><div class="stat-value">$${mes.toLocaleString('es-CO')}</div><div class="stat-label">Este mes</div></div>
+      <div class="stat-card gold"><div class="stat-icon">📈</div><div class="stat-value">$${tot.toLocaleString('es-CO')}</div><div class="stat-label">Total</div></div>
+      <div class="stat-card gold"><div class="stat-icon">👤</div><div class="stat-value">${rows.length}</div><div class="stat-label">Registros</div></div>`;
+    if(!rows.length){tb.innerHTML='<tr><td colspan="5" class="loading">No hay donaciones</td></tr>';return;}
+    tb.innerHTML=rows.map(x=>`<tr>
+      <td><strong>${esc(x.donante||x.nombre||'Anónimo')}</strong></td>
+      <td><strong>$${parseFloat(x.monto||0).toLocaleString('es-CO')}</strong></td>
+      <td>${esc(x.metodo||'—')}</td>
+      <td>${fmt(x.creado_en)}</td>
+      <td><span class="tag ${x.estado==='confirmada'?'tag-pub':'tag-bor'}">${x.estado||'pendiente'}</span></td></tr>`).join('');
+  }catch{tb.innerHTML='<tr><td colspan="5" class="loading">Error al cargar</td></tr>';}
+}
+
+async function cargarUsuarios(){
+  const tb=document.getElementById('tablaUsuarios');
+  tb.innerHTML='<tr><td colspan="5" class="loading">Cargando...</td></tr>';
+  try{
+    const d=await api('/api/usuarios');
+    const rows=d.usuarios||[];
+    if(!rows.length){tb.innerHTML='<tr><td colspan="5" class="loading">No hay usuarios</td></tr>';return;}
+    tb.innerHTML=rows.map(u=>`<tr>
+      <td><strong>${esc(u.nombre)}</strong></td>
+      <td>${esc(u.email)}</td>
+      <td><span class="chip ${['superadmin','admin'].includes(u.rol)?'chip-admin':'chip-colab'}">${['superadmin','admin'].includes(u.rol)?'👑 Admin':'🤝 Colaborador'}</span></td>
+      <td>${u.ultimo_acceso?fmt(u.ultimo_acceso):'Nunca'}</td>
+      <td><div class="actions">
+        ${u.id!==currentUser.id?`<button class="action-btn del" onclick="confirmar(()=>eliminarUsuario(${u.id}))">🗑</button>`:'<span style="color:var(--muted);font-size:0.78rem">Tú</span>'}
+      </div></td></tr>`).join('');
+  }catch{tb.innerHTML='<tr><td colspan="5" class="loading">Error al cargar</td></tr>';}
+}
+
+async function crearUsuario(){
+  const el=document.getElementById('usuMsg');
+  const body={nombre:document.getElementById('usuNombre').value,email:document.getElementById('usuEmail').value,password:document.getElementById('usuPassword').value,rol:document.getElementById('usuRol').value};
+  try{
+    const res=await fetch(API+'/api/usuarios',{method:'POST',headers:authH(),body:JSON.stringify(body),credentials:'include'});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.message||'Error');
+    closeModal('modalUsuario');toast('Usuario creado');cargarUsuarios();
+  }catch(e){el.innerHTML=`<div class="alert alert-danger">❌ ${e.message}</div>`;}
+}
+
+async function eliminarUsuario(id){
+  try{await fetch(API+'/api/usuarios/'+id,{method:'DELETE',headers:authH(),credentials:'include'});toast('Usuario eliminado');cargarUsuarios();}
+  catch{toast('Error al eliminar','danger');}
+}
+
+async function cargarConfiguracion(){
+  try{
+    const d=await api('/api/configuracion');
+    const c=d.configuracion||{};
+    document.getElementById('confNombre').value=c.nombre_fundacion||'';
+    document.getElementById('confMision').value=c.mision||'';
+    document.getElementById('confEmail').value=c.email_contacto||'';
+    document.getElementById('confTelefono').value=c.telefono||'';
+    document.getElementById('confFacebook').value=c.facebook||'';
+    document.getElementById('confInstagram').value=c.instagram||'';
+    document.getElementById('confWhatsapp').value=c.whatsapp||'';
+  }catch{}
+}
+
+async function guardarConfig(){
+  const body={nombre_fundacion:document.getElementById('confNombre').value,mision:document.getElementById('confMision').value,email_contacto:document.getElementById('confEmail').value,telefono:document.getElementById('confTelefono').value,facebook:document.getElementById('confFacebook').value,instagram:document.getElementById('confInstagram').value,whatsapp:document.getElementById('confWhatsapp').value};
+  try{
+    const res=await fetch(API+'/api/configuracion',{method:'POST',headers:authH(),body:JSON.stringify(body),credentials:'include'});
+    if(!res.ok)throw new Error();
+    toast('Configuración guardada');
+  }catch{toast('Error al guardar','danger');}
+}
+
+async function cambiarPassword(){
+  const el=document.getElementById('passMsg');
+  const actual=document.getElementById('passActual').value;
+  const nueva=document.getElementById('passNueva').value;
+  const confirma=document.getElementById('passConfirma').value;
+  if(nueva!==confirma){el.innerHTML='<div class="alert alert-danger">❌ Las contraseñas no coinciden</div>';return;}
+  if(nueva.length<8){el.innerHTML='<div class="alert alert-danger">❌ Mínimo 8 caracteres</div>';return;}
+  try{
+    const res=await fetch(API+'/api/auth/cambiar-password',{method:'POST',headers:authH(),body:JSON.stringify({passwordActual:actual,passwordNueva:nueva}),credentials:'include'});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.message||'Error');
+    el.innerHTML='<div class="alert alert-success">✅ Contraseña actualizada</div>';
+    ['passActual','passNueva','passConfirma'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){el.innerHTML=`<div class="alert alert-danger">❌ ${e.message}</div>`;}
+}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function confirmar(fn){document.getElementById('btnConfEliminar').onclick=()=>{closeModal('modalEliminar');fn();};openModal('modalEliminar');}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmt(f){if(!f)return'—';return new Date(f).toLocaleDateString('es-CO',{year:'numeric',month:'short',day:'numeric'});}
+function toast(msg,type='success'){
+  const el=document.createElement('div');
+  el.className='alert alert-'+type;
+  el.style.cssText='position:fixed;top:20px;right:20px;z-index:9999;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,0.4)';
+  el.innerHTML=(type==='success'?'✅ ':'❌ ')+msg;
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 3000);
+  setTimeout(()=>el.remove(),3500);
 }
 
-// Cerrar modales con Escape
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
-  }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+  if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')login();
 });
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
-// Cerrar modal al click fuera
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('open');
-  });
-});
+(async()=>{if(await verificarSesion())iniciarPanel();})();
 </script>
 </body>
 </html>
