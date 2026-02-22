@@ -100,7 +100,20 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Ruta 404
+// ══════════════════════════════════════════════════════════
+// FALLBACK PARA SPA (Single Page Application)
+// ══════════════════════════════════════════════════════════
+// Todas las rutas que no sean API sirven index.html
+app.get('*', (req, res, next) => {
+  // Si es una ruta de API, pasa al siguiente middleware (404)
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
+  // Sirve index.html para cualquier otra ruta HTML
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
+// Ruta 404 solo para rutas de API
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
 });
