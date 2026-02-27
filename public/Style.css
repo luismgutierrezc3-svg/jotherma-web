@@ -136,6 +136,8 @@ nav {
 .hero-content {
   position: relative;
   max-width: 750px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .hero-badge {
@@ -166,6 +168,8 @@ nav {
   margin-bottom: 36px;
   max-width: 600px;
   line-height: 1.8;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-btns {
@@ -173,6 +177,7 @@ nav {
   gap: 16px;
   flex-wrap: wrap;
   margin-bottom: 56px;
+  justify-content: center;
 }
 
 .btn-primary {
@@ -203,6 +208,7 @@ nav {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .stat { text-align: center; }
