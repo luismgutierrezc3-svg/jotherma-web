@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -21,7 +21,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
+scriptSrcAttr: ["'unsafe-inline'"],      imgSrc: ["'self'", "data:", "https:"],
     },
   },
 }));
