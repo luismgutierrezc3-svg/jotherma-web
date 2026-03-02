@@ -3,7 +3,64 @@
    main.js — Lógica principal del sitio
    ============================================================ */
 
-/* ─── Scroll animations (IntersectionObserver) ─────────────── */
+/* ─── Blog: cargar publicaciones desde la API ──────────────── */
+const EMOJIS_CAT = {
+  'Educación':  '📣',
+  'Nutrición':  '🍽️',
+  'Deporte':    '🏆',
+  'Salud':      '❤️',
+  'Cultura':    '🎨',
+  'Comunidad':  '🤝',
+};
+const COLORES_CARD = ['c1','c2','c3','c1','c2','c3'];
+
+async function cargarPublicaciones() {
+  const grid = document.getElementById('blog-grid');
+  if (!grid) return;
+
+  try {
+    const res  = await fetch('/api/publicaciones');
+    const data = await res.json();
+    const pubs = (data.publicaciones || []).filter(p => p.estado === 'publicado');
+
+    if (!pubs.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">No hay publicaciones disponibles aún.</div>';
+      return;
+    }
+
+    grid.innerHTML = pubs.map((p, i) => {
+      const emoji = EMOJIS_CAT[p.categoria] || '📰';
+      const color = COLORES_CARD[i % 3];
+      const fecha = p.fecha_publicacion
+        ? new Date(p.fecha_publicacion).toLocaleDateString('es-CO', { day:'numeric', month:'long', year:'numeric' })
+        : new Date(p.creado_en).toLocaleDateString('es-CO', { day:'numeric', month:'long', year:'numeric' });
+      const resumen = p.contenido ? p.contenido.substring(0, 120) + (p.contenido.length > 120 ? '…' : '') : '';
+
+      return `
+        <div class="blog-card">
+          <div class="blog-img ${color}">${emoji}</div>
+          <div class="blog-body">
+            <span class="blog-cat">${p.categoria || 'General'}</span>
+            <h3>${p.titulo}</h3>
+            <p>${resumen}</p>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span class="blog-meta">${fecha}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch (err) {
+    console.error('Error cargando publicaciones:', err);
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">No se pudieron cargar las publicaciones.</div>';
+  }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', cargarPublicaciones);
+
+
+
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((e) => {
