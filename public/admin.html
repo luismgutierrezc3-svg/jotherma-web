@@ -177,9 +177,6 @@ tr:hover td{background:rgba(255,255,255,0.02);}
   <div class="topbar">
     <div class="topbar-title" id="topbarTitle">DASHBOARD</div>
     <div style="font-size:0.78rem;color:var(--muted)" id="topbarDate"></div>
-    <a href="/" target="_blank" id="btnVerSitio" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;background:rgba(79,138,255,0.12);border:1px solid rgba(79,138,255,0.35);border-radius:8px;color:var(--accent);font-size:0.82rem;font-weight:600;text-decoration:none;transition:all 0.2s;letter-spacing:0.5px;" onmouseover="this.style.background='rgba(79,138,255,0.22)'" onmouseout="this.style.background='rgba(79,138,255,0.12)'">
-      <span style="font-size:1rem;">🌐</span> Ver sitio web
-    </a>
   </div>
   <div class="content">
 
@@ -304,6 +301,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <select class="form-select" id="pubCategoria"><option>Comunidad</option><option>Educación</option><option>Salud</option><option>Voluntariado</option><option>Noticias</option></select>
     </div>
     <div class="form-group"><label class="form-label">Contenido</label><textarea class="form-textarea" id="pubContenido"></textarea></div>
+    <div class="form-group"><label class="form-label">URL de imagen <span style="color:var(--muted);font-size:0.75rem;">(opcional — pega un enlace de imagen)</span></label><input class="form-input" id="pubImagen" placeholder="https://ejemplo.com/imagen.jpg"></div>
     <div class="form-group"><label class="form-label">Estado</label>
       <select class="form-select" id="pubEstado"><option value="publicado">Publicado</option><option value="borrador">Borrador</option></select>
     </div>
@@ -468,6 +466,7 @@ function abrirNuevaPublicacion(){
   document.getElementById('pubId').value='';
   document.getElementById('pubTitulo').value='';
   document.getElementById('pubContenido').value='';
+  document.getElementById('pubImagen').value='';
   document.getElementById('pubEstado').value='publicado';
   openModal('modalPublicacion');
 }
@@ -478,13 +477,14 @@ function editarPub(p){
   document.getElementById('pubTitulo').value=p.titulo||'';
   document.getElementById('pubCategoria').value=p.categoria||'Comunidad';
   document.getElementById('pubContenido').value=p.contenido||'';
+  document.getElementById('pubImagen').value=p.imagen_url||'';
   document.getElementById('pubEstado').value=p.estado||'borrador';
   openModal('modalPublicacion');
 }
 
 async function guardarPublicacion(){
   const id=document.getElementById('pubId').value;
-  const body={titulo:document.getElementById('pubTitulo').value,contenido:document.getElementById('pubContenido').value,categoria:document.getElementById('pubCategoria').value,estado:document.getElementById('pubEstado').value};
+  const body={titulo:document.getElementById('pubTitulo').value,contenido:document.getElementById('pubContenido').value,categoria:document.getElementById('pubCategoria').value,estado:document.getElementById('pubEstado').value,imagen_url:document.getElementById('pubImagen').value||null};
   try{
     const url=id?`/api/publicaciones/${id}`:'/api/publicaciones';
     const method=id?'PUT':'POST';

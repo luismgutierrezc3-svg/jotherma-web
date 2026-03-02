@@ -35,16 +35,20 @@ async function cargarPublicaciones() {
         ? new Date(p.fecha_publicacion).toLocaleDateString('es-CO', { day:'numeric', month:'long', year:'numeric' })
         : new Date(p.creado_en).toLocaleDateString('es-CO', { day:'numeric', month:'long', year:'numeric' });
       const resumen = p.contenido ? p.contenido.substring(0, 120) + (p.contenido.length > 120 ? '…' : '') : '';
+      const imgHtml = p.imagen_url
+        ? `<img src="${p.imagen_url}" alt="${p.titulo}" style="width:100%;height:200px;object-fit:cover;border-radius:12px 12px 0 0;">`
+        : `<div class="blog-img ${color}">${emoji}</div>`;
 
       return `
         <div class="blog-card">
-          <div class="blog-img ${color}">${emoji}</div>
+          ${imgHtml}
           <div class="blog-body">
             <span class="blog-cat">${p.categoria || 'General'}</span>
             <h3>${p.titulo}</h3>
             <p>${resumen}</p>
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <span class="blog-meta">${fecha}</span>
+              <a href="#" class="btn-ver" onclick="abrirPublicacion(event, ${JSON.stringify(p).replace(/"/g,'&quot;')})">Leer más →</a>
             </div>
           </div>
         </div>`;
@@ -227,3 +231,42 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
     });
   }
 })();
+
+
+/* ─── Modal de publicación completa ───────────────────────── */
+function abrirPublicacion(e, p) {
+  e.preventDefault();
+
+  // Crear modal si no existe
+  let overlay = document.getElementById('pub-modal-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'pub-modal-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);';
+    overlay.addEventListener('click', (ev) => { if (ev.target === overlay) overlay.style.display = 'none'; });
+    document.body.appendChild(overlay);
+  }
+
+  const fecha = p.fecha_publicacion
+    ? new Date(p.fecha_publicacion).toLocaleDateString('es-CO', { day:'numeric', month:'long', year:'numeric' })
+    : new Date(p.creado_en).toLocaleDateString('es-CO', { day:'numeric', month:'long', year:'numeric' });
+
+  const imgHtml = p.imagen_url
+    ? `<img src="${p.imagen_url}" alt="${p.titulo}" style="width:100%;max-height:320px;object-fit:cover;border-radius:8px;margin-bottom:20px;">`
+    : '';
+
+  const contenidoHtml = (p.contenido || '').replace(/\n/g, '<br>');
+
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:16px;max-width:700px;width:100%;max-height:85vh;overflow-y:auto;padding:36px;position:relative;">
+      <button onclick="document.getElementById('pub-modal-overlay').style.display='none'"
+        style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#666;">✕</button>
+      ${imgHtml}
+      <span style="background:#e8f0ff;color:#0d2d5e;padding:3px 12px;border-radius:20px;font-size:0.8rem;font-weight:600;">${p.categoria || 'General'}</span>
+      <h2 style="margin:14px 0 8px;font-size:1.6rem;color:#0d2d5e;line-height:1.3;">${p.titulo}</h2>
+      <p style="color:#888;font-size:0.85rem;margin-bottom:20px;">📅 ${fecha}</p>
+      <div style="color:#333;font-size:1rem;line-height:1.75;">${contenidoHtml}</div>
+    </div>`;
+
+  overlay.style.display = 'flex';
+}
