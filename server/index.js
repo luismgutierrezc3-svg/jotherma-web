@@ -89,15 +89,15 @@ app.get('/api/health', (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════
-// MANEJO DE ERRORES
+// RUTAS EXPLÍCITAS PARA PÁGINAS HTML
 // ══════════════════════════════════════════════════════════
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  
-  res.status(err.status || 500).json({
-    error: err.message || 'Error interno del servidor',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
+
+// Ruta explícita para el panel de administración
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/admin.html'));
+});
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/admin.html'));
 });
 
 // ══════════════════════════════════════════════════════════
@@ -109,13 +109,25 @@ app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api/')) {
     return next();
   }
-  // Sirve index.html para cualquier otra ruta HTML
+  // Sirve index.html para cualquier otra ruta
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // Ruta 404 solo para rutas de API
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
+});
+
+// ══════════════════════════════════════════════════════════
+// MANEJO DE ERRORES
+// ══════════════════════════════════════════════════════════
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  
+  res.status(err.status || 500).json({
+    error: err.message || 'Error interno del servidor',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
 });
 
 // ══════════════════════════════════════════════════════════
