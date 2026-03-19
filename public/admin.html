@@ -602,6 +602,10 @@ body {
             <span class="icon">📝</span>
             <span>Publicaciones</span>
           </button>
+          <button class="nav-item" onclick="showPanel('textos', this)">
+  <span class="icon">✏️</span>
+  <span>Textos del Sitio</span>
+</button>
           <button class="nav-item" onclick="showPanel('mensajes', this)">
             <span class="icon">✉️</span>
             <span>Mensajes</span>
@@ -877,6 +881,384 @@ function showToast(message, type = 'success') {
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 3000);
 }
+<!-- ══════════════════════════════════════════════════════════
+     PANEL: TEXTOS DEL SITIO
+     
+     Agregar esto en el archivo: public/admin.html
+     Dentro de la sección <div class="page-content">
+     ══════════════════════════════════════════════════════════ -->
+
+<div id="panel-textos" class="panel">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+    <div>
+      <h2 style="color:var(--texto); font-size:1.8rem; font-weight:800; margin-bottom:8px;">
+        📝 Textos del Sitio Web
+      </h2>
+      <p style="color:var(--texto2); font-size:0.95rem;">
+        Edita los textos que aparecen en tu sitio web público sin tocar código
+      </p>
+    </div>
+    <button onclick="guardarTodosLosTextos()" style="
+      background:linear-gradient(135deg, var(--success), #059669);
+      color:#fff;
+      border:none;
+      border-radius:12px;
+      padding:14px 28px;
+      font-weight:700;
+      font-size:0.95rem;
+      cursor:pointer;
+      transition:all 0.3s;
+      box-shadow:0 4px 16px rgba(16, 185, 129, 0.3);
+    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(16, 185, 129, 0.4)'"
+       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(16, 185, 129, 0.3)'">
+      💾 Guardar Todos los Cambios
+    </button>
+  </div>
+
+  <!-- Alerta informativa -->
+  <div style="
+    background:linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1));
+    border:2px solid rgba(59, 130, 246, 0.3);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:32px;
+    display:flex;
+    align-items:flex-start;
+    gap:16px;
+  ">
+    <span style="font-size:2rem;">💡</span>
+    <div>
+      <div style="font-weight:700; color:var(--secondary); margin-bottom:6px;">
+        ¿Cómo funciona?
+      </div>
+      <div style="color:var(--texto2); font-size:0.9rem; line-height:1.6;">
+        Edita los textos en los campos de abajo y haz click en "Guardar". Los cambios se verán 
+        reflejados inmediatamente en tu sitio web público. ¡No necesitas saber programación!
+      </div>
+    </div>
+  </div>
+
+  <div id="contenedor-textos">
+    <!-- Aquí se cargarán dinámicamente los formularios de textos -->
+    <div style="text-align:center; padding:60px 20px; color:var(--texto3);">
+      <div style="font-size:3rem; margin-bottom:16px;">⏳</div>
+      <div style="font-weight:600;">Cargando textos del sitio...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TAMBIÉN AGREGAR ESTE BOTÓN EN EL SIDEBAR
+     En la sección nav-group donde dice "Contenido"
+     ══════════════════════════════════════════════════════════ -->
+
+<!--
+<button class="nav-item" onclick="showPanel('textos', this)">
+  <span class="icon">📝</span>
+  <span>Textos del Sitio</span>
+</button>
+-->
+
+<style>
+/* Estilos para las tarjetas de secciones */
+.seccion-card {
+  background:var(--bg2);
+  border:2px solid var(--border);
+  border-radius:20px;
+  padding:28px;
+  margin-bottom:24px;
+  transition:all 0.3s;
+}
+
+.seccion-card:hover {
+  border-color:var(--primary);
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+}
+
+.seccion-header {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:24px;
+  padding-bottom:16px;
+  border-bottom:2px solid var(--border);
+}
+
+.seccion-icono {
+  font-size:2rem;
+  width:56px;
+  height:56px;
+  background:linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.seccion-titulo {
+  font-size:1.4rem;
+  font-weight:800;
+  color:var(--texto);
+}
+
+.campo-texto {
+  margin-bottom:24px;
+}
+
+.campo-label {
+  display:block;
+  font-size:0.85rem;
+  font-weight:700;
+  color:var(--texto2);
+  margin-bottom:8px;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+
+.campo-input, .campo-textarea {
+  width:100%;
+  background:var(--bg3);
+  border:2px solid var(--border);
+  border-radius:12px;
+  padding:14px 18px;
+  color:var(--texto);
+  font-size:0.95rem;
+  font-family:inherit;
+  outline:none;
+  transition:all 0.3s;
+}
+
+.campo-input:focus, .campo-textarea:focus {
+  border-color:var(--primary);
+  background:rgba(51, 65, 85, 0.8);
+  box-shadow:0 0 0 4px rgba(249, 115, 22, 0.1);
+}
+
+.campo-textarea {
+  min-height:120px;
+  resize:vertical;
+  line-height:1.6;
+}
+
+.campo-input::placeholder, .campo-textarea::placeholder {
+  color:var(--texto3);
+}
+</style>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// VARIABLES GLOBALES
+// ══════════════════════════════════════════════════════════
+let textosOriginales = {};
+let textosEditados = {};
+
+// ══════════════════════════════════════════════════════════
+// CARGAR TEXTOS AL ABRIR EL PANEL
+// ══════════════════════════════════════════════════════════
+async function cargarTextosSitio() {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/textos`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al cargar textos');
+    }
+
+    const data = await response.json();
+    textosOriginales = data.textos;
+    textosEditados = JSON.parse(JSON.stringify(data.textos)); // Copia profunda
+
+    renderizarFormularios(textosEditados);
+
+  } catch (error) {
+    console.error('Error:', error);
+    document.getElementById('contenedor-textos').innerHTML = `
+      <div style="text-align:center; padding:60px 20px;">
+        <div style="font-size:3rem; margin-bottom:16px;">❌</div>
+        <div style="color:var(--danger); font-weight:600; margin-bottom:8px;">
+          Error al cargar los textos
+        </div>
+        <div style="color:var(--texto3); font-size:0.9rem;">
+          ${error.message}
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDERIZAR FORMULARIOS DE EDICIÓN
+// ══════════════════════════════════════════════════════════
+function renderizarFormularios(textos) {
+  const contenedor = document.getElementById('contenedor-textos');
+  
+  const secciones = {
+    hero: { titulo: 'Página de Inicio (Hero)', icono: '🏠', descripcion: 'Textos principales de la portada' },
+    quienes: { titulo: 'Quiénes Somos', icono: '👥', descripcion: 'Información sobre la fundación' },
+    programas: { titulo: 'Programas', icono: '📚', descripcion: 'Descripción de cada programa' },
+    contacto: { titulo: 'Contacto', icono: '📧', descripcion: 'Información de contacto' }
+  };
+
+  let html = '';
+
+  for (const [seccionKey, seccionData] of Object.entries(secciones)) {
+    if (!textos[seccionKey]) continue;
+
+    html += `
+      <div class="seccion-card">
+        <div class="seccion-header">
+          <div class="seccion-icono">${seccionData.icono}</div>
+          <div>
+            <div class="seccion-titulo">${seccionData.titulo}</div>
+            <div style="color:var(--texto3); font-size:0.85rem; margin-top:4px;">
+              ${seccionData.descripcion}
+            </div>
+          </div>
+        </div>
+
+        <div class="campos-container">
+    `;
+
+    for (const [clave, valor] of Object.entries(textos[seccionKey])) {
+      const esLargo = valor.length > 100;
+      const labelTexto = formatearLabel(clave);
+      
+      html += `
+        <div class="campo-texto">
+          <label class="campo-label">${labelTexto}</label>
+          ${esLargo ? `
+            <textarea 
+              class="campo-textarea"
+              data-seccion="${seccionKey}"
+              data-clave="${clave}"
+              onchange="actualizarTextoEditado(this)"
+              placeholder="Escribe aquí..."
+            >${valor}</textarea>
+          ` : `
+            <input 
+              type="text"
+              class="campo-input"
+              data-seccion="${seccionKey}"
+              data-clave="${clave}"
+              value="${valor}"
+              onchange="actualizarTextoEditado(this)"
+              placeholder="Escribe aquí..."
+            />
+          `}
+        </div>
+      `;
+    }
+
+    html += `
+        </div>
+      </div>
+    `;
+  }
+
+  contenedor.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════
+// FORMATEAR LABEL (clave → Texto legible)
+// ══════════════════════════════════════════════════════════
+function formatearLabel(clave) {
+  const labels = {
+    titulo: 'Título Principal',
+    subtitulo: 'Subtítulo',
+    descripcion: 'Descripción',
+    email: 'Email de Contacto',
+    telefono: 'Teléfono',
+    direccion: 'Dirección',
+    educacion_nombre: 'Programa Educación - Nombre',
+    educacion_desc: 'Programa Educación - Descripción',
+    nutricion_nombre: 'Programa Nutrición - Nombre',
+    nutricion_desc: 'Programa Nutrición - Descripción',
+    deporte_nombre: 'Programa Deporte - Nombre',
+    deporte_desc: 'Programa Deporte - Descripción'
+  };
+
+  return labels[clave] || clave.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+// ══════════════════════════════════════════════════════════
+// ACTUALIZAR TEXTO EDITADO
+// ══════════════════════════════════════════════════════════
+function actualizarTextoEditado(input) {
+  const seccion = input.dataset.seccion;
+  const clave = input.dataset.clave;
+  const valor = input.value;
+
+  if (!textosEditados[seccion]) {
+    textosEditados[seccion] = {};
+  }
+
+  textosEditados[seccion][clave] = valor;
+}
+
+// ══════════════════════════════════════════════════════════
+// GUARDAR TODOS LOS TEXTOS
+// ══════════════════════════════════════════════════════════
+async function guardarTodosLosTextos() {
+  if (!confirm('¿Estás seguro de guardar todos los cambios? Los textos del sitio web se actualizarán inmediatamente.')) {
+    return;
+  }
+
+  try {
+    showToast('💾 Guardando cambios...', 'success');
+
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/textos/actualizar`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ textos: textosEditados })
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al guardar textos');
+    }
+
+    const data = await response.json();
+    
+    textosOriginales = JSON.parse(JSON.stringify(textosEditados));
+    
+    showToast(`✅ ${data.actualizados} texto(s) guardado(s) exitosamente`, 'success');
+
+  } catch (error) {
+    console.error('Error:', error);
+    showToast('❌ Error al guardar los textos', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// DETECTAR CAMBIOS NO GUARDADOS
+// ══════════════════════════════════════════════════════════
+window.addEventListener('beforeunload', function (e) {
+  if (JSON.stringify(textosOriginales) !== JSON.stringify(textosEditados)) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+// ══════════════════════════════════════════════════════════
+// CARGAR TEXTOS CUANDO SE ABRE EL PANEL
+// ══════════════════════════════════════════════════════════
+// Modificar la función showPanel existente para que cargue los textos
+const showPanelOriginal = showPanel;
+showPanel = function(id, btn) {
+  showPanelOriginal(id, btn);
+  if (id === 'textos') {
+    cargarTextosSitio();
+  }
+};
+
 </script>
 </body>
 </html>

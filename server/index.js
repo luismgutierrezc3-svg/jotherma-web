@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -63,6 +63,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // ══════════════════════════════════════════════════════════
 const authRoutes = require('./routes/auth');
 const usuariosRoutes = require('./routes/usuarios');
+const textosRoutes = require('./routes/textos');
 const publicacionesRoutes = require('./routes/publicaciones');
 const mensajesRoutes = require('./routes/mensajes');
 const donacionesRoutes = require('./routes/donaciones');
@@ -71,6 +72,7 @@ const configuracionRoutes = require('./routes/configuracion');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/textos', textosRoutes);
 app.use('/api/publicaciones', publicacionesRoutes);
 app.use('/api/mensajes', mensajesRoutes);
 app.use('/api/donaciones', donacionesRoutes);

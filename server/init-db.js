@@ -1,4 +1,4 @@
-const { pool } = require('../config/database');
+﻿const { pool } = require('../config/database');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 
@@ -200,3 +200,48 @@ if (require.main === module) {
 }
 
 module.exports = initDatabase;
+
+// ══════════════════════════════════════════════════════════
+// TABLA: textos_sitio
+// ══════════════════════════════════════════════════════════
+console.log('📋 Creando tabla: textos_sitio');
+await client.query(`
+  CREATE TABLE IF NOT EXISTS textos_sitio (
+    id SERIAL PRIMARY KEY,
+    seccion VARCHAR(100) NOT NULL,
+    clave VARCHAR(100) NOT NULL,
+    valor TEXT,
+    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(seccion, clave)
+  );
+  
+  CREATE INDEX IF NOT EXISTS idx_textos_seccion ON textos_sitio(seccion);
+`);
+
+// Insertar textos por defecto
+console.log('📝 Insertando textos por defecto del sitio...');
+await client.query(`
+  INSERT INTO textos_sitio (seccion, clave, valor) VALUES
+    ('hero', 'titulo', 'Fundación JOTHERMA'),
+    ('hero', 'subtitulo', 'Jóvenes Trabajando Como Hermanos'),
+    ('hero', 'descripcion', 'Trabajamos junto a niños, jóvenes y comunidades vulnerables de toda Colombia.'),
+    ('quienes', 'titulo', 'Quiénes Somos'),
+    ('quienes', 'descripcion', 'Somos una organización sin ánimo de lucro dedicada a transformar vidas.'),
+    ('programas', 'titulo', 'Nuestros Programas'),
+    ('programas', 'educacion_nombre', 'Educación'),
+    ('programas', 'educacion_desc', 'Apoyo escolar y becas para niños y jóvenes.'),
+    ('contacto', 'titulo', 'Contáctanos'),
+    ('contacto', 'email', 'info@jotherma.org')
+  ON CONFLICT (seccion, clave) DO NOTHING
+`);
+```
+
+**D) Guarda** el archivo (Ctrl+S)
+
+---
+
+### **PASO 4: Registrar la ruta en el servidor**
+
+**A) Abre:**
+```
+C:\Users\CARRILLO SALAS\Desktop\WEB JOTHERMA\JOTHERMA\jotherma-web\server\index.js
