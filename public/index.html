@@ -39,8 +39,8 @@
 <section id="inicio">
   <div class="hero-content">
     <div class="hero-badge">Fundación Jóvenes Trabajando Como Hermanos</div>
-    <h1>Transformando vidas en <span>Colombia</span></h1>
-    <p>Trabajamos junto a niños, jóvenes y comunidades vulnerables de toda Colombia, construyendo oportunidades reales de educación, desarrollo y dignidad a lo largo y ancho del país.</p>
+    <h1 id="txt-hero-titulo">Transformando vidas en <span>Colombia</span></h1>
+    <p id="txt-hero-subtitulo">Trabajamos junto a niños, jóvenes y comunidades vulnerables de toda Colombia, construyendo oportunidades reales de educación, desarrollo y dignidad a lo largo y ancho del país.</p>
     <div class="hero-btns">
       <a href="#donaciones" class="btn-primary">Haz una donación</a>
       <a href="#programas" class="btn-outline">Conoce nuestros programas</a>
@@ -63,8 +63,8 @@
       </div>
       <div>
         <div class="section-label">Quiénes somos</div>
-        <h2 class="section-title">Una fundación que trabaja unida, como hermanos</h2>
-        <p style="color:var(--gris-texto);font-size:1rem;line-height:1.85;margin-bottom:28px;">
+        <h2 id="txt-quienes-titulo" class="section-title">Una fundación que trabaja unida, como hermanos</h2>
+        <p id="txt-quienes-descripcion" style="color:var(--gris-texto);font-size:1rem;line-height:1.85;margin-bottom:28px;">
           La Fundación Jóvenes Trabajando Como Hermanos — <strong>JOTHERMA</strong> — nació del convencimiento de que el trabajo solidario y colectivo es la herramienta más poderosa para transformar realidades. Desde Colombia, desarrollamos programas integrales que acompañan a niños, adolescentes, jóvenes, familias y comunidades rurales en su camino hacia una vida digna y llena de oportunidades.
         </p>
         <p style="color:var(--gris-texto);font-size:1rem;line-height:1.85;margin-bottom:28px;">
@@ -73,11 +73,11 @@
         <div class="mision-vision">
           <div class="mv-card">
             <h4>🎯 Misión</h4>
-            <p>Promover el desarrollo humano integral de comunidades vulnerables de Colombia, a través de programas educativos, sociales y culturales que generen bienestar y equidad.</p>
+            <p id="txt-quienes-mision">Promover el desarrollo humano integral de comunidades vulnerables de Colombia, a través de programas educativos, sociales y culturales que generen bienestar y equidad.</p>
           </div>
           <div class="mv-card">
             <h4>🌟 Visión</h4>
-            <p>Ser una fundación referente en Colombia por su impacto social sostenible, reconocida por transformar vidas con transparencia, amor y compromiso.</p>
+            <p id="txt-quienes-vision">Ser una fundación referente en Colombia por su impacto social sostenible, reconocida por transformar vidas con transparencia, amor y compromiso.</p>
           </div>
         </div>
       </div>
@@ -164,47 +164,10 @@
       <h2 class="section-title">Momentos que transforman</h2>
       <p class="section-sub">Aquí documentamos el trabajo y el impacto de JOTHERMA en el territorio.</p>
     </div>
-    <div class="galeria-grid fade-in">
-      <div class="gal-item" style="background:linear-gradient(135deg,#1a3a5c,#2563a8);">
-        <div class="gal-bg"></div>
-        <div class="gal-placeholder">🏘️</div>
-        <div class="gal-overlay"><span class="gal-icon">🔍</span></div>
-        <div class="gal-label">Comunidades rurales</div>
-      </div>
-      <div class="gal-item" style="background:linear-gradient(135deg,#2e8b57,#1a6e3c);">
-        <div class="gal-bg"></div>
-        <div class="gal-placeholder">📚</div>
-        <div class="gal-overlay"><span class="gal-icon">🔍</span></div>
-        <div class="gal-label">Formación educativa</div>
-      </div>
-      <div class="gal-item" style="background:linear-gradient(135deg,#e07b2a,#c96b1a);">
-        <div class="gal-bg"></div>
-        <div class="gal-placeholder">⚽</div>
-        <div class="gal-overlay"><span class="gal-icon">🔍</span></div>
-        <div class="gal-label">Deporte y recreación</div>
-      </div>
-      <div class="gal-item" style="background:linear-gradient(135deg,#1e4f82,#1a3a5c);">
-        <div class="gal-bg"></div>
-        <div class="gal-placeholder">🌱</div>
-        <div class="gal-overlay"><span class="gal-icon">🔍</span></div>
-        <div class="gal-label">Liderazgo juvenil</div>
-      </div>
-      <div class="gal-item" style="background:linear-gradient(135deg,#5b2c6f,#8e44ad);">
-        <div class="gal-bg"></div>
-        <div class="gal-placeholder">🥗</div>
-        <div class="gal-overlay"><span class="gal-icon">🔍</span></div>
-        <div class="gal-label">Nutrición y alimentación</div>
-      </div>
-      <div class="gal-item" style="background:linear-gradient(135deg,#1a6e3c,#2e8b57);">
-        <div class="gal-bg"></div>
-        <div class="gal-placeholder">🤝</div>
-        <div class="gal-overlay"><span class="gal-icon">🔍</span></div>
-        <div class="gal-label">Trabajo en equipo</div>
-      </div>
+    <div class="galeria-grid fade-in" id="galeria-grid">
+      <!-- Las fotos se cargan dinámicamente desde Cloudinary -->
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">Cargando galería...</div>
     </div>
-    <p style="text-align:center;margin-top:24px;color:var(--gris-texto);font-size:0.88rem;">
-      📸 Las fotos reales de tus proyectos reemplazarán estos espacios una vez cargadas al sitio.
-    </p>
   </div>
 </section>
 
@@ -346,26 +309,26 @@
         <div class="form-row">
           <div class="form-group">
             <label>Nombre completo *</label>
-            <input type="text" placeholder="Tu nombre"/>
+            <input id="vol-nombre" type="text" placeholder="Tu nombre"/>
           </div>
           <div class="form-group">
             <label>Correo electrónico *</label>
-            <input type="email" placeholder="correo@ejemplo.com"/>
+            <input id="vol-email" type="email" placeholder="correo@ejemplo.com"/>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label>Teléfono / WhatsApp *</label>
-            <input type="tel" placeholder="+57 300 000 0000"/>
+            <input id="vol-telefono" type="tel" placeholder="+57 300 000 0000"/>
           </div>
           <div class="form-group">
             <label>Ciudad de residencia *</label>
-            <input type="text" placeholder="Santa Marta, Barranquilla..."/>
+            <input id="vol-ciudad" type="text" placeholder="Santa Marta, Barranquilla..."/>
           </div>
         </div>
         <div class="form-group">
           <label>Área de interés *</label>
-          <select>
+          <select id="vol-area">
             <option>Selecciona un área</option>
             <option>Educación y tutoría</option>
             <option>Psicología y bienestar</option>
@@ -377,10 +340,10 @@
         </div>
         <div class="form-group">
           <label>Cuéntanos sobre ti y tu motivación</label>
-          <textarea rows="3" placeholder="¿Por qué quieres ser voluntario/a en JOTHERMA?"></textarea>
+          <textarea id="vol-mensaje" rows="3" placeholder="¿Por qué quieres ser voluntario/a en JOTHERMA?"></textarea>
         </div>
         <p style="font-size:0.78rem;color:var(--gris-texto);margin-bottom:14px;">Al enviar este formulario autorizas el tratamiento de tus datos personales de acuerdo con nuestra <a href="#legal" style="color:var(--azul-medio);">Política de Privacidad</a> (Ley 1581 de 2012).</p>
-        <button class="btn-submit" onclick="alert('¡Gracias por tu interés! Te contactaremos pronto.')">Enviar solicitud</button>
+        <button id="vol-submit" class="btn-submit">Enviar solicitud</button>
       </div>
     </div>
   </div>
@@ -490,28 +453,28 @@
             <div class="dato-icon">📍</div>
             <div class="dato-text">
               <strong>Ubicación</strong>
-              <span>Colombia</span>
+              <span id="txt-contacto-direccion">Colombia</span>
             </div>
           </div>
           <div class="contacto-dato">
             <div class="dato-icon">✉️</div>
             <div class="dato-text">
               <strong>Correo electrónico</strong>
-              <span><a href="mailto:contacto@jotherma.org">contacto@jotherma.org</a></span>
+              <span><a id="txt-contacto-email" href="mailto:contacto@jotherma.org">contacto@jotherma.org</a></span>
             </div>
           </div>
           <div class="contacto-dato">
             <div class="dato-icon">📱</div>
             <div class="dato-text">
               <strong>WhatsApp / Teléfono</strong>
-              <span>+57 300 000 0000</span>
+              <span id="txt-contacto-telefono">+57 300 000 0000</span>
             </div>
           </div>
           <div class="contacto-dato">
             <div class="dato-icon">🕐</div>
             <div class="dato-text">
               <strong>Horario de atención</strong>
-              <span>Lunes a viernes, 8:00 am – 5:00 pm</span>
+              <span id="txt-contacto-horario">Lunes a viernes, 8:00 am – 5:00 pm</span>
             </div>
           </div>
         </div>
@@ -521,16 +484,16 @@
         <div class="form-row">
           <div class="form-group">
             <label>Nombre completo *</label>
-            <input type="text" placeholder="Tu nombre"/>
+            <input id="contact-nombre" type="text" placeholder="Tu nombre"/>
           </div>
           <div class="form-group">
             <label>Correo electrónico *</label>
-            <input type="email" placeholder="correo@ejemplo.com"/>
+            <input id="contact-email" type="email" placeholder="correo@ejemplo.com"/>
           </div>
         </div>
         <div class="form-group">
           <label>Asunto *</label>
-          <select>
+          <select id="contact-asunto">
             <option>Selecciona un asunto</option>
             <option>Información sobre programas</option>
             <option>Voluntariado</option>
@@ -542,10 +505,10 @@
         </div>
         <div class="form-group">
           <label>Mensaje *</label>
-          <textarea rows="4" placeholder="¿En qué podemos ayudarte?"></textarea>
+          <textarea id="contact-mensaje" rows="4" placeholder="¿En qué podemos ayudarte?"></textarea>
         </div>
         <p style="font-size:0.78rem;color:var(--gris-texto);margin-bottom:14px;">Al enviar este formulario autorizas el tratamiento de tus datos de acuerdo con nuestra <a href="#legal" style="color:var(--azul-medio);">Política de Privacidad</a>.</p>
-        <button class="btn-submit" onclick="alert('¡Mensaje enviado! Te responderemos pronto.')">Enviar mensaje</button>
+        <button id="contact-submit" class="btn-submit">Enviar mensaje</button>
       </div>
     </div>
   </div>
@@ -609,4 +572,57 @@
 
 
 <script src="main.js" defer></script>
+<script>
+// ══════════════════════════════════════════════════════════
+// CARGAR TEXTOS DINÁMICOS DESDE LA API
+// ══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/api/textos');
+    if (!res.ok) return;
+    const data = await res.json();
+    const t = data.textos || {};
+
+    // HERO
+    if (t.hero) {
+      if (t.hero.titulo)    document.getElementById('txt-hero-titulo').textContent    = t.hero.titulo;
+      if (t.hero.subtitulo) document.getElementById('txt-hero-subtitulo').textContent = t.hero.subtitulo;
+    }
+
+    // QUIÉNES SOMOS
+    if (t.quienes) {
+      if (t.quienes.titulo)       document.getElementById('txt-quienes-titulo').textContent      = t.quienes.titulo;
+      if (t.quienes.descripcion)  document.getElementById('txt-quienes-descripcion').textContent = t.quienes.descripcion;
+      if (t.quienes.mision)       document.getElementById('txt-quienes-mision').textContent      = t.quienes.mision;
+      if (t.quienes.vision)       document.getElementById('txt-quienes-vision').textContent      = t.quienes.vision;
+    }
+
+    // CONTACTO
+    if (t.contacto) {
+      if (t.contacto.direccion) {
+        document.getElementById('txt-contacto-direccion').textContent = t.contacto.direccion;
+      }
+      if (t.contacto.email_de_contacto) {
+        const el = document.getElementById('txt-contacto-email');
+        el.textContent = t.contacto.email_de_contacto;
+        el.href = 'mailto:' + t.contacto.email_de_contacto;
+        // También actualizar el footer
+        const footerEmail = document.getElementById('txt-footer-email');
+        if (footerEmail) {
+          footerEmail.textContent = t.contacto.email_de_contacto;
+          footerEmail.href = 'mailto:' + t.contacto.email_de_contacto;
+        }
+      }
+      if (t.contacto.telefono) {
+        document.getElementById('txt-contacto-telefono').textContent = t.contacto.telefono;
+      }
+      if (t.contacto.horario) {
+        document.getElementById('txt-contacto-horario').textContent = t.contacto.horario;
+      }
+    }
+  } catch(e) {
+    console.log('Textos dinámicos no disponibles, usando valores por defecto.');
+  }
+});
+</script>
 </body>

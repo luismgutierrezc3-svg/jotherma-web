@@ -64,6 +64,59 @@ async function cargarPublicaciones() {
 document.addEventListener('DOMContentLoaded', cargarPublicaciones);
 
 
+/* ─── Galería: cargar fotos desde la API (Cloudinary) ──────── */
+async function cargarGaleria() {
+  const grid = document.getElementById('galeria-grid');
+  if (!grid) return;
+
+  try {
+    const res  = await fetch('/api/galeria');
+    const data = await res.json();
+    const fotos = data.fotos || data.imagenes || data || [];
+
+    if (!fotos.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">No hay fotos en la galería aún.</div>';
+      return;
+    }
+
+    grid.innerHTML = fotos.map(foto => {
+      const url    = foto.url || foto.imagen_url || foto.secure_url || '';
+      const titulo = foto.titulo || foto.descripcion || foto.alt || '';
+      return `
+        <div class="gal-item" style="cursor:pointer;" onclick="abrirFoto('${url}','${titulo.replace(/'/g,"\\'")}')">
+          <img src="${url}" alt="${titulo}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+          <div class="gal-overlay"><span class="gal-icon">🔍</span></div>
+          ${titulo ? `<div class="gal-label">${titulo}</div>` : ''}
+        </div>`;
+    }).join('');
+
+  } catch (err) {
+    console.error('Error cargando galería:', err);
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">No se pudo cargar la galería.</div>';
+  }
+}
+
+function abrirFoto(url, titulo) {
+  let overlay = document.getElementById('foto-modal-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'foto-modal-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer;';
+    overlay.addEventListener('click', () => overlay.style.display = 'none');
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = `
+    <div style="max-width:900px;width:100%;text-align:center;">
+      <img src="${url}" alt="${titulo}" style="max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain;">
+      ${titulo ? `<p style="color:#fff;margin-top:12px;font-size:1rem;">${titulo}</p>` : ''}
+      <p style="color:#aaa;font-size:0.8rem;margin-top:8px;">Clic para cerrar</p>
+    </div>`;
+  overlay.style.display = 'flex';
+}
+
+document.addEventListener('DOMContentLoaded', cargarGaleria);
+
+
 
 const observer = new IntersectionObserver(
   (entries) => {
@@ -181,30 +234,89 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 });
 
 
-/* ─── Formulario de contacto: feedback visual ──────────────── */
+/* ─── Formulario de contacto: envío real a la API ──────────── */
 (function initContactForm() {
-  const contactSection = document.getElementById('contacto');
-  if (!contactSection) return;
-
-  const submitBtn = contactSection.querySelector('.btn-submit');
+  const submitBtn = document.getElementById('contact-submit');
   if (!submitBtn) return;
 
-  submitBtn.addEventListener('click', () => {
-    alert('¡Mensaje enviado! Te responderemos pronto.');
+  submitBtn.addEventListener('click', async () => {
+    const nombre  = (document.getElementById('contact-nombre')?.value  || '').trim();
+    const email   = (document.getElementById('contact-email')?.value   || '').trim();
+    const asunto  = (document.getElementById('contact-asunto')?.value  || '').trim();
+    const mensaje = (document.getElementById('contact-mensaje')?.value || '').trim();
+
+    if (!nombre || !email || !mensaje || asunto === 'Selecciona un asunto') {
+      alert('Por favor completa todos los campos obligatorios.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    try {
+      const res = await fetch('/api/mensajes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, asunto, mensaje })
+      });
+      if (!res.ok) throw new Error('Error del servidor');
+      alert('¡Mensaje enviado! Te responderemos pronto.');
+      document.getElementById('contact-nombre').value  = '';
+      document.getElementById('contact-email').value   = '';
+      document.getElementById('contact-asunto').selectedIndex = 0;
+      document.getElementById('contact-mensaje').value = '';
+    } catch (err) {
+      console.error(err);
+      alert('Hubo un error al enviar el mensaje. Por favor intenta de nuevo.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Enviar mensaje';
+    }
   });
 })();
 
 
-/* ─── Formulario de voluntariado: feedback visual ──────────── */
+/* ─── Formulario de voluntariado: envío real a la API ──────── */
 (function initVolForm() {
-  const volSection = document.getElementById('voluntariado');
-  if (!volSection) return;
-
-  const submitBtn = volSection.querySelector('.btn-submit');
+  const submitBtn = document.getElementById('vol-submit');
   if (!submitBtn) return;
 
-  submitBtn.addEventListener('click', () => {
-    alert('¡Gracias por tu interés! Te contactaremos pronto.');
+  submitBtn.addEventListener('click', async () => {
+    const nombre   = (document.getElementById('vol-nombre')?.value   || '').trim();
+    const email    = (document.getElementById('vol-email')?.value    || '').trim();
+    const telefono = (document.getElementById('vol-telefono')?.value || '').trim();
+    const ciudad   = (document.getElementById('vol-ciudad')?.value   || '').trim();
+    const area     = (document.getElementById('vol-area')?.value     || '').trim();
+    const mensaje  = (document.getElementById('vol-mensaje')?.value  || '').trim();
+
+    if (!nombre || !email || !telefono || !ciudad || area === 'Selecciona un área') {
+      alert('Por favor completa todos los campos obligatorios.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    try {
+      const res = await fetch('/api/voluntarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, telefono, ciudad, area_interes: area, mensaje })
+      });
+      if (!res.ok) throw new Error('Error del servidor');
+      alert('¡Gracias por tu interés! Te contactaremos pronto.');
+      ['vol-nombre','vol-email','vol-telefono','vol-ciudad','vol-mensaje'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('vol-area').selectedIndex = 0;
+    } catch (err) {
+      console.error(err);
+      alert('Hubo un error al enviar tu solicitud. Por favor intenta de nuevo.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Enviar solicitud';
+    }
   });
 })();
 
