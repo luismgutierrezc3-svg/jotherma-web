@@ -932,11 +932,10 @@ function showToast(message, type = 'success') {
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 3000);
 }
+</script>
+
 <!-- ══════════════════════════════════════════════════════════
      PANEL: TEXTOS DEL SITIO
-     
-     Agregar esto en el archivo: public/admin.html
-     Dentro de la sección <div class="page-content">
      ══════════════════════════════════════════════════════════ -->
 
 <div id="panel-textos" class="panel">
@@ -1305,9 +1304,14 @@ window.addEventListener('beforeunload', function (e) {
 const showPanelOriginal = showPanel;
 showPanel = function(id, btn) {
   showPanelOriginal(id, btn);
-  if (id === 'textos') {
-    cargarTextosSitio();
-  }
+  if (id === 'textos') cargarTextosSitio();
+  if (id === 'publicaciones') cargarPublicacionesAdmin();
+  if (id === 'galeria') cargarGaleriaAdmin();
+  if (id === 'mensajes') cargarMensajes();
+  if (id === 'voluntarios') cargarVoluntarios();
+  if (id === 'donaciones') cargarDonaciones();
+  if (id === 'usuarios') cargarUsuarios();
+  if (id === 'configuracion') cargarConfiguracion();
 };
 
 </script>
@@ -1345,22 +1349,6 @@ function authHeaders() {
     'Content-Type': 'application/json'
   };
 }
-
-// ══════════════════════════════════════════════════════════
-// CARGAR DATOS AL ABRIR PANEL
-// ══════════════════════════════════════════════════════════
-const _showPanelOrig = showPanel;
-showPanel = function(id, btn) {
-  _showPanelOrig(id, btn);
-  if (id === 'publicaciones') cargarPublicacionesAdmin();
-  if (id === 'galeria') cargarGaleriaAdmin();
-  if (id === 'mensajes') cargarMensajes();
-  if (id === 'voluntarios') cargarVoluntarios();
-  if (id === 'donaciones') cargarDonaciones();
-  if (id === 'usuarios') cargarUsuarios();
-  if (id === 'configuracion') cargarConfiguracion();
-  if (id === 'textos') cargarTextosSitio();
-};
 
 // ══════════════════════════════════════════════════════════
 // PUBLICACIONES
