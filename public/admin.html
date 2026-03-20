@@ -602,10 +602,14 @@ body {
             <span class="icon">📝</span>
             <span>Publicaciones</span>
           </button>
+          <button class="nav-item" onclick="showPanel('galeria', this)">
+            <span class="icon">🖼️</span>
+            <span>Galería</span>
+          </button>
           <button class="nav-item" onclick="showPanel('textos', this)">
-  <span class="icon">✏️</span>
-  <span>Textos del Sitio</span>
-</button>
+            <span class="icon">✏️</span>
+            <span>Textos del Sitio</span>
+          </button>
           <button class="nav-item" onclick="showPanel('mensajes', this)">
             <span class="icon">✉️</span>
             <span>Mensajes</span>
@@ -684,57 +688,81 @@ body {
           </div>
         </div>
 
-        <!-- OTROS PANELES (publicaciones, mensajes, etc.) -->
+        <!-- PANEL: PUBLICACIONES -->
         <div id="panel-publicaciones" class="panel">
-          <h2 style="color:var(--texto); margin-bottom:20px;">📝 Publicaciones</h2>
-          <p style="color:var(--texto2);">Gestiona las publicaciones del blog aquí.</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;">
+            <h2 style="color:var(--texto);font-size:1.8rem;font-weight:800;">📝 Publicaciones</h2>
+            <button onclick="abrirModalPublicacion()" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;border-radius:12px;padding:12px 24px;font-weight:700;cursor:pointer;">+ Nueva Publicación</button>
+          </div>
+          <div id="lista-publicaciones" style="display:grid;gap:16px;">
+            <div style="text-align:center;padding:40px;color:var(--texto3);">⏳ Cargando...</div>
+          </div>
         </div>
 
+        <!-- PANEL: GALERÍA -->
+        <div id="panel-galeria" class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;">
+            <h2 style="color:var(--texto);font-size:1.8rem;font-weight:800;">🖼️ Galería de Fotos</h2>
+            <button onclick="abrirModalGaleria()" style="background:linear-gradient(135deg,var(--secondary),#1d4ed8);color:#fff;border:none;border-radius:12px;padding:12px 24px;font-weight:700;cursor:pointer;">+ Agregar Foto</button>
+          </div>
+          <div id="lista-galeria" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
+            <div style="text-align:center;padding:40px;color:var(--texto3);">⏳ Cargando...</div>
+          </div>
+        </div>
+
+        <!-- PANEL: MENSAJES -->
         <div id="panel-mensajes" class="panel">
-          <h2 style="color:var(--texto); margin-bottom:20px;">✉️ Mensajes</h2>
-          <p style="color:var(--texto2);">Revisa los mensajes de contacto.</p>
+          <h2 style="color:var(--texto);margin-bottom:24px;font-size:1.8rem;font-weight:800;">✉️ Mensajes de Contacto</h2>
+          <div id="lista-mensajes" style="display:grid;gap:12px;"></div>
         </div>
 
+        <!-- PANEL: VOLUNTARIOS -->
         <div id="panel-voluntarios" class="panel">
-          <h2 style="color:var(--texto); margin-bottom:20px;">🤝 Voluntarios</h2>
-          <p style="color:var(--texto2);">Gestiona las solicitudes de voluntariado.</p>
+          <h2 style="color:var(--texto);margin-bottom:24px;font-size:1.8rem;font-weight:800;">🤝 Voluntarios</h2>
+          <div id="lista-voluntarios" style="display:grid;gap:12px;"></div>
         </div>
 
+        <!-- PANEL: DONACIONES -->
         <div id="panel-donaciones" class="panel">
-          <h2 style="color:var(--texto); margin-bottom:20px;">💰 Donaciones</h2>
-          <p style="color:var(--texto2);">Administra las donaciones recibidas.</p>
+          <h2 style="color:var(--texto);margin-bottom:24px;font-size:1.8rem;font-weight:800;">💰 Donaciones</h2>
+          <div id="lista-donaciones" style="display:grid;gap:12px;"></div>
         </div>
 
+        <!-- PANEL: USUARIOS -->
         <div id="panel-usuarios" class="panel">
-          <h2 style="color:var(--texto); margin-bottom:20px;">👥 Usuarios</h2>
-          <p style="color:var(--texto2);">Gestiona los usuarios del sistema.</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;">
+            <h2 style="color:var(--texto);font-size:1.8rem;font-weight:800;">👥 Usuarios</h2>
+            <button onclick="abrirModalUsuario()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff;border:none;border-radius:12px;padding:12px 24px;font-weight:700;cursor:pointer;">+ Nuevo Usuario</button>
+          </div>
+          <div id="lista-usuarios" style="display:grid;gap:12px;"></div>
         </div>
 
+        <!-- PANEL: CONFIGURACIÓN -->
         <div id="panel-configuracion" class="panel">
-          <h2 style="color:var(--texto); margin-bottom:20px;">⚙️ Configuración</h2>
-          <p style="color:var(--texto2);">Ajustes generales del sitio.</p>
+          <h2 style="color:var(--texto);margin-bottom:24px;font-size:1.8rem;font-weight:800;">⚙️ Configuración</h2>
+          <div style="background:var(--bg2);border-radius:16px;padding:28px;">
+            <h3 style="color:var(--texto);margin-bottom:20px;">🏦 Datos Bancarios</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div><label style="color:var(--texto2);font-size:0.85rem;font-weight:700;display:block;margin-bottom:6px;">BANCO</label><input id="cfg-banco" type="text" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px;color:var(--texto);" placeholder="Nombre del banco"/></div>
+              <div><label style="color:var(--texto2);font-size:0.85rem;font-weight:700;display:block;margin-bottom:6px;">TIPO CUENTA</label><input id="cfg-tipo" type="text" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px;color:var(--texto);" placeholder="Ahorros/Corriente"/></div>
+              <div><label style="color:var(--texto2);font-size:0.85rem;font-weight:700;display:block;margin-bottom:6px;">NÚMERO CUENTA</label><input id="cfg-cuenta" type="text" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px;color:var(--texto);" placeholder="000-000000-00"/></div>
+              <div><label style="color:var(--texto2);font-size:0.85rem;font-weight:700;display:block;margin-bottom:6px;">NIT</label><input id="cfg-nit" type="text" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px;color:var(--texto);" placeholder="000.000.000-0"/></div>
+              <div style="grid-column:1/-1;"><label style="color:var(--texto2);font-size:0.85rem;font-weight:700;display:block;margin-bottom:6px;">RAZÓN SOCIAL</label><input id="cfg-razon" type="text" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px;color:var(--texto);" placeholder="Nombre legal"/></div>
+            </div>
+            <button onclick="guardarConfiguracion()" style="margin-top:20px;background:linear-gradient(135deg,var(--success),#059669);color:#fff;border:none;border-radius:12px;padding:14px 28px;font-weight:700;cursor:pointer;">💾 Guardar</button>
+          </div>
         </div>
 
+        <!-- PANEL: TEXTOS -->
         <div id="panel-textos" class="panel">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;">
             <div>
-              <h2 style="color:var(--texto); font-size:1.8rem; font-weight:800; margin-bottom:8px;">
-                📝 Textos del Sitio Web
-              </h2>
-              <p style="color:var(--texto2); font-size:0.95rem;">
-                Edita los textos que aparecen en tu sitio web público sin tocar código
-              </p>
+              <h2 style="color:var(--texto);font-size:1.8rem;font-weight:800;margin-bottom:8px;">✏️ Textos del Sitio</h2>
+              <p style="color:var(--texto2);font-size:0.95rem;">Edita los textos del sitio público sin tocar código</p>
             </div>
-            <button onclick="guardarTodosLosTextos()" style="background:linear-gradient(135deg, var(--success), #059669); color:#fff; border:none; border-radius:12px; padding:14px 28px; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 16px rgba(16, 185, 129, 0.3);">
-              💾 Guardar Todos los Cambios
-            </button>
+            <button onclick="guardarTodosLosTextos()" style="background:linear-gradient(135deg,var(--success),#059669);color:#fff;border:none;border-radius:12px;padding:14px 28px;font-weight:700;cursor:pointer;">💾 Guardar Cambios</button>
           </div>
-          <div id="contenedor-textos">
-            <div style="text-align:center; padding:60px 20px; color:var(--texto3);">
-              <div style="font-size:3rem; margin-bottom:16px;">⏳</div>
-              <div style="font-weight:600;">Cargando textos del sitio...</div>
-            </div>
-          </div>
+          <div id="contenedor-textos"><div style="text-align:center;padding:40px;color:var(--texto3);">⏳ Cargando...</div></div>
         </div>
 
       </div>
@@ -904,8 +932,83 @@ function showToast(message, type = 'success') {
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 3000);
 }
+<!-- ══════════════════════════════════════════════════════════
+     PANEL: TEXTOS DEL SITIO
+     
+     Agregar esto en el archivo: public/admin.html
+     Dentro de la sección <div class="page-content">
+     ══════════════════════════════════════════════════════════ -->
 
-</script>
+<div id="panel-textos" class="panel">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+    <div>
+      <h2 style="color:var(--texto); font-size:1.8rem; font-weight:800; margin-bottom:8px;">
+        📝 Textos del Sitio Web
+      </h2>
+      <p style="color:var(--texto2); font-size:0.95rem;">
+        Edita los textos que aparecen en tu sitio web público sin tocar código
+      </p>
+    </div>
+    <button onclick="guardarTodosLosTextos()" style="
+      background:linear-gradient(135deg, var(--success), #059669);
+      color:#fff;
+      border:none;
+      border-radius:12px;
+      padding:14px 28px;
+      font-weight:700;
+      font-size:0.95rem;
+      cursor:pointer;
+      transition:all 0.3s;
+      box-shadow:0 4px 16px rgba(16, 185, 129, 0.3);
+    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(16, 185, 129, 0.4)'"
+       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(16, 185, 129, 0.3)'">
+      💾 Guardar Todos los Cambios
+    </button>
+  </div>
+
+  <!-- Alerta informativa -->
+  <div style="
+    background:linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1));
+    border:2px solid rgba(59, 130, 246, 0.3);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:32px;
+    display:flex;
+    align-items:flex-start;
+    gap:16px;
+  ">
+    <span style="font-size:2rem;">💡</span>
+    <div>
+      <div style="font-weight:700; color:var(--secondary); margin-bottom:6px;">
+        ¿Cómo funciona?
+      </div>
+      <div style="color:var(--texto2); font-size:0.9rem; line-height:1.6;">
+        Edita los textos en los campos de abajo y haz click en "Guardar". Los cambios se verán 
+        reflejados inmediatamente en tu sitio web público. ¡No necesitas saber programación!
+      </div>
+    </div>
+  </div>
+
+  <div id="contenedor-textos">
+    <!-- Aquí se cargarán dinámicamente los formularios de textos -->
+    <div style="text-align:center; padding:60px 20px; color:var(--texto3);">
+      <div style="font-size:3rem; margin-bottom:16px;">⏳</div>
+      <div style="font-weight:600;">Cargando textos del sitio...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TAMBIÉN AGREGAR ESTE BOTÓN EN EL SIDEBAR
+     En la sección nav-group donde dice "Contenido"
+     ══════════════════════════════════════════════════════════ -->
+
+<!--
+<button class="nav-item" onclick="showPanel('textos', this)">
+  <span class="icon">📝</span>
+  <span>Textos del Sitio</span>
+</button>
+-->
 
 <style>
 /* Estilos para las tarjetas de secciones */
@@ -1206,6 +1309,490 @@ showPanel = function(id, btn) {
     cargarTextosSitio();
   }
 };
+
+</script>
+
+<style>
+.seccion-card{background:var(--bg2);border:2px solid var(--border);border-radius:20px;padding:28px;margin-bottom:24px;}
+.seccion-card:hover{border-color:var(--primary);}
+.campo-label{display:block;font-size:0.85rem;font-weight:700;color:var(--texto2);margin-bottom:8px;text-transform:uppercase;}
+.campo-input,.campo-textarea{width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:12px;padding:14px 18px;color:var(--texto);font-size:0.95rem;font-family:inherit;outline:none;transition:all 0.3s;}
+.campo-input:focus,.campo-textarea:focus{border-color:var(--primary);}
+.campo-textarea{min-height:120px;resize:vertical;}
+.item-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+.badge-estado{padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;}
+.badge-nuevo{background:rgba(59,130,246,0.2);color:#60a5fa;}
+.badge-leido{background:rgba(16,185,129,0.2);color:#34d399;}
+.badge-publicado{background:rgba(16,185,129,0.2);color:#34d399;}
+.badge-borrador{background:rgba(245,158,11,0.2);color:#fbbf24;}
+.badge-pendiente{background:rgba(245,158,11,0.2);color:#fbbf24;}
+.badge-aprobado{background:rgba(16,185,129,0.2);color:#34d399;}
+.badge-rechazado{background:rgba(239,68,68,0.2);color:#f87171;}
+.badge-confirmada{background:rgba(16,185,129,0.2);color:#34d399;}
+</style>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// UTILIDADES
+// ══════════════════════════════════════════════════════════
+function cerrarModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function authHeaders() {
+  return {
+    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json'
+  };
+}
+
+// ══════════════════════════════════════════════════════════
+// CARGAR DATOS AL ABRIR PANEL
+// ══════════════════════════════════════════════════════════
+const _showPanelOrig = showPanel;
+showPanel = function(id, btn) {
+  _showPanelOrig(id, btn);
+  if (id === 'publicaciones') cargarPublicacionesAdmin();
+  if (id === 'galeria') cargarGaleriaAdmin();
+  if (id === 'mensajes') cargarMensajes();
+  if (id === 'voluntarios') cargarVoluntarios();
+  if (id === 'donaciones') cargarDonaciones();
+  if (id === 'usuarios') cargarUsuarios();
+  if (id === 'configuracion') cargarConfiguracion();
+  if (id === 'textos') cargarTextosSitio();
+};
+
+// ══════════════════════════════════════════════════════════
+// PUBLICACIONES
+// ══════════════════════════════════════════════════════════
+async function cargarPublicacionesAdmin() {
+  const lista = document.getElementById('lista-publicaciones');
+  try {
+    const res = await fetch('/api/publicaciones', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    const pubs = data.publicaciones || [];
+    if (!pubs.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);">No hay publicaciones aún.</div>'; return; }
+    lista.innerHTML = pubs.map(p => `
+      <div class="item-card">
+        <div style="display:flex;gap:16px;align-items:flex-start;flex:1;">
+          ${p.imagen_url ? `<img src="${p.imagen_url}" style="width:80px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0;">` : '<div style="width:80px;height:60px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">📝</div>'}
+          <div>
+            <div style="font-weight:700;color:var(--texto);margin-bottom:4px;">${p.titulo}</div>
+            <div style="color:var(--texto3);font-size:0.85rem;margin-bottom:8px;">${p.categoria || 'Sin categoría'} · ${new Date(p.creado_en).toLocaleDateString('es-CO')}</div>
+            <span class="badge-estado badge-${p.estado}">${p.estado}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          <button onclick="editarPublicacion(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="background:var(--bg3);border:none;border-radius:8px;padding:8px 14px;color:var(--texto);cursor:pointer;font-size:0.85rem;">✏️ Editar</button>
+          <button onclick="eliminarPublicacion(${p.id})" style="background:rgba(239,68,68,0.15);border:none;border-radius:8px;padding:8px 14px;color:#f87171;cursor:pointer;font-size:0.85rem;">🗑️</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { lista.innerHTML = '<div style="color:var(--danger);padding:20px;">Error cargando publicaciones</div>'; }
+}
+
+function abrirModalPublicacion() {
+  document.getElementById('pub-id').value = '';
+  document.getElementById('pub-titulo').value = '';
+  document.getElementById('pub-contenido').value = '';
+  document.getElementById('pub-categoria').value = '';
+  document.getElementById('pub-estado').value = 'borrador';
+  document.getElementById('pub-imagen').value = '';
+  document.getElementById('pub-imagen-preview').innerHTML = '';
+  document.getElementById('modal-pub-titulo').textContent = 'Nueva Publicación';
+  document.getElementById('modal-publicacion').style.display = 'flex';
+
+  document.getElementById('pub-imagen').onchange = function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => { document.getElementById('pub-imagen-preview').innerHTML = `<img src="${e.target.result}" style="max-height:120px;border-radius:8px;">`; };
+      reader.readAsDataURL(file);
+    }
+  };
+}
+
+function editarPublicacion(p) {
+  document.getElementById('pub-id').value = p.id;
+  document.getElementById('pub-titulo').value = p.titulo;
+  document.getElementById('pub-contenido').value = p.contenido || '';
+  document.getElementById('pub-categoria').value = p.categoria || '';
+  document.getElementById('pub-estado').value = p.estado;
+  document.getElementById('pub-imagen').value = '';
+  document.getElementById('pub-imagen-preview').innerHTML = p.imagen_url ? `<img src="${p.imagen_url}" style="max-height:100px;border-radius:8px;">` : '';
+  document.getElementById('modal-pub-titulo').textContent = 'Editar Publicación';
+  document.getElementById('modal-publicacion').style.display = 'flex';
+}
+
+async function guardarPublicacion() {
+  const id = document.getElementById('pub-id').value;
+  const titulo = document.getElementById('pub-titulo').value.trim();
+  const contenido = document.getElementById('pub-contenido').value.trim();
+  const categoria = document.getElementById('pub-categoria').value;
+  const estado = document.getElementById('pub-estado').value;
+  const imagenFile = document.getElementById('pub-imagen').files[0];
+
+  if (!titulo) { showToast('El título es requerido', 'error'); return; }
+
+  try {
+    const formData = new FormData();
+    formData.append('titulo', titulo);
+    formData.append('contenido', contenido);
+    formData.append('categoria', categoria);
+    formData.append('estado', estado);
+    if (imagenFile) formData.append('imagen', imagenFile);
+
+    const url = id ? `/api/publicaciones/${id}` : '/api/publicaciones';
+    const method = id ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+      body: formData
+    });
+
+    if (!res.ok) throw new Error('Error guardando');
+    showToast(id ? '✅ Publicación actualizada' : '✅ Publicación creada');
+    cerrarModal('modal-publicacion');
+    cargarPublicacionesAdmin();
+  } catch(e) { showToast('❌ Error guardando publicación', 'error'); }
+}
+
+async function eliminarPublicacion(id) {
+  if (!confirm('¿Eliminar esta publicación?')) return;
+  try {
+    await fetch(`/api/publicaciones/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    showToast('🗑️ Publicación eliminada');
+    cargarPublicacionesAdmin();
+  } catch(e) { showToast('❌ Error eliminando', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// GALERÍA
+// ══════════════════════════════════════════════════════════
+async function cargarGaleriaAdmin() {
+  const lista = document.getElementById('lista-galeria');
+  try {
+    const res = await fetch('/api/galeria', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    const items = data.galeria || [];
+    if (!items.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);grid-column:1/-1;">No hay fotos en la galería.</div>'; return; }
+    lista.innerHTML = items.map(item => `
+      <div style="background:var(--bg2);border-radius:16px;overflow:hidden;border:1px solid var(--border);">
+        ${item.imagen_url ? `<img src="${item.imagen_url}" style="width:100%;height:160px;object-fit:cover;">` : '<div style="width:100%;height:160px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:2rem;">🖼️</div>'}
+        <div style="padding:12px;">
+          <div style="font-weight:700;color:var(--texto);font-size:0.9rem;margin-bottom:4px;">${item.titulo || 'Sin título'}</div>
+          <div style="color:var(--texto3);font-size:0.8rem;margin-bottom:10px;">${item.descripcion || ''}</div>
+          <button onclick="eliminarFotoGaleria(${item.id})" style="width:100%;background:rgba(239,68,68,0.15);border:none;border-radius:8px;padding:8px;color:#f87171;cursor:pointer;font-size:0.85rem;">🗑️ Eliminar</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { lista.innerHTML = '<div style="color:var(--danger);padding:20px;grid-column:1/-1;">Error cargando galería</div>'; }
+}
+
+function abrirModalGaleria() {
+  document.getElementById('gal-id').value = '';
+  document.getElementById('gal-titulo').value = '';
+  document.getElementById('gal-descripcion').value = '';
+  document.getElementById('gal-imagen').value = '';
+  document.getElementById('gal-imagen-preview').innerHTML = '';
+  document.getElementById('modal-galeria').style.display = 'flex';
+
+  document.getElementById('gal-imagen').onchange = function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => { document.getElementById('gal-imagen-preview').innerHTML = `<img src="${e.target.result}" style="max-height:120px;border-radius:8px;">`; };
+      reader.readAsDataURL(file);
+    }
+  };
+}
+
+async function guardarFotoGaleria() {
+  const titulo = document.getElementById('gal-titulo').value.trim();
+  const descripcion = document.getElementById('gal-descripcion').value.trim();
+  const imagenFile = document.getElementById('gal-imagen').files[0];
+
+  if (!imagenFile) { showToast('Selecciona una imagen', 'error'); return; }
+
+  try {
+    showToast('📤 Subiendo foto...', 'success');
+    const formData = new FormData();
+    formData.append('titulo', titulo);
+    formData.append('descripcion', descripcion);
+    formData.append('imagen', imagenFile);
+
+    const res = await fetch('/api/galeria', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+      body: formData
+    });
+
+    if (!res.ok) throw new Error('Error');
+    showToast('✅ Foto agregada a la galería');
+    cerrarModal('modal-galeria');
+    cargarGaleriaAdmin();
+  } catch(e) { showToast('❌ Error subiendo foto', 'error'); }
+}
+
+async function eliminarFotoGaleria(id) {
+  if (!confirm('¿Eliminar esta foto?')) return;
+  try {
+    await fetch(`/api/galeria/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    showToast('🗑️ Foto eliminada');
+    cargarGaleriaAdmin();
+  } catch(e) { showToast('❌ Error eliminando', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// MENSAJES
+// ══════════════════════════════════════════════════════════
+async function cargarMensajes() {
+  const lista = document.getElementById('lista-mensajes');
+  try {
+    const res = await fetch('/api/mensajes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    const msgs = data.mensajes || [];
+    if (!msgs.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);">No hay mensajes.</div>'; return; }
+    lista.innerHTML = msgs.map(m => `
+      <div class="item-card">
+        <div style="flex:1;">
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px;">
+            <span style="font-weight:700;color:var(--texto);">${m.nombre}</span>
+            <span style="color:var(--texto3);font-size:0.85rem;">${m.email}</span>
+            <span class="badge-estado badge-${m.estado}">${m.estado}</span>
+          </div>
+          <div style="font-weight:600;color:var(--texto2);margin-bottom:6px;">${m.asunto || 'Sin asunto'}</div>
+          <div style="color:var(--texto3);font-size:0.9rem;">${(m.mensaje || '').substring(0,120)}...</div>
+          <div style="color:var(--texto3);font-size:0.8rem;margin-top:8px;">${new Date(m.creado_en).toLocaleDateString('es-CO')}</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          ${m.estado === 'nuevo' ? `<button onclick="cambiarEstadoMensaje(${m.id},'leido')" style="background:rgba(16,185,129,0.15);border:none;border-radius:8px;padding:8px 12px;color:#34d399;cursor:pointer;font-size:0.8rem;">✓ Marcar leído</button>` : ''}
+        </div>
+      </div>`).join('');
+  } catch(e) { lista.innerHTML = '<div style="color:var(--danger);padding:20px;">Error cargando mensajes</div>'; }
+}
+
+async function cambiarEstadoMensaje(id, estado) {
+  try {
+    await fetch(`/api/mensajes/${id}/estado`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ estado }) });
+    cargarMensajes();
+  } catch(e) { showToast('❌ Error', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// VOLUNTARIOS
+// ══════════════════════════════════════════════════════════
+async function cargarVoluntarios() {
+  const lista = document.getElementById('lista-voluntarios');
+  try {
+    const res = await fetch('/api/voluntarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    const vols = data.voluntarios || [];
+    if (!vols.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);">No hay solicitudes.</div>'; return; }
+    lista.innerHTML = vols.map(v => `
+      <div class="item-card">
+        <div style="flex:1;">
+          <div style="font-weight:700;color:var(--texto);margin-bottom:4px;">${v.nombre} <span class="badge-estado badge-${v.estado}">${v.estado}</span></div>
+          <div style="color:var(--texto3);font-size:0.85rem;">${v.email} · ${v.telefono || ''}</div>
+          <div style="color:var(--texto2);font-size:0.9rem;margin-top:6px;">Programa: ${v.programa || 'No especificado'}</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          ${v.estado === 'pendiente' ? `
+            <button onclick="cambiarEstadoVoluntario(${v.id},'aprobado')" style="background:rgba(16,185,129,0.15);border:none;border-radius:8px;padding:8px 12px;color:#34d399;cursor:pointer;font-size:0.8rem;">✓ Aprobar</button>
+            <button onclick="cambiarEstadoVoluntario(${v.id},'rechazado')" style="background:rgba(239,68,68,0.15);border:none;border-radius:8px;padding:8px 12px;color:#f87171;cursor:pointer;font-size:0.8rem;">✗ Rechazar</button>
+          ` : ''}
+        </div>
+      </div>`).join('');
+  } catch(e) { lista.innerHTML = '<div style="color:var(--danger);padding:20px;">Error</div>'; }
+}
+
+async function cambiarEstadoVoluntario(id, estado) {
+  try {
+    await fetch(`/api/voluntarios/${id}/estado`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ estado }) });
+    cargarVoluntarios();
+  } catch(e) { showToast('❌ Error', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// DONACIONES
+// ══════════════════════════════════════════════════════════
+async function cargarDonaciones() {
+  const lista = document.getElementById('lista-donaciones');
+  try {
+    const res = await fetch('/api/donaciones', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    const dons = data.donaciones || [];
+    if (!dons.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);">No hay donaciones.</div>'; return; }
+    lista.innerHTML = dons.map(d => `
+      <div class="item-card">
+        <div style="flex:1;">
+          <div style="font-weight:700;color:var(--texto);margin-bottom:4px;">${d.donante} <span class="badge-estado badge-${d.estado}">${d.estado}</span></div>
+          <div style="color:var(--texto3);font-size:0.85rem;">${d.email || ''} · ${d.metodo || ''}</div>
+          <div style="color:var(--naranja);font-weight:800;font-size:1.1rem;margin-top:6px;">$${Number(d.monto).toLocaleString('es-CO')}</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          ${d.estado === 'pendiente' ? `
+            <button onclick="cambiarEstadoDonacion(${d.id},'confirmada')" style="background:rgba(16,185,129,0.15);border:none;border-radius:8px;padding:8px 12px;color:#34d399;cursor:pointer;font-size:0.8rem;">✓ Confirmar</button>
+            <button onclick="cambiarEstadoDonacion(${d.id},'rechazada')" style="background:rgba(239,68,68,0.15);border:none;border-radius:8px;padding:8px 12px;color:#f87171;cursor:pointer;font-size:0.8rem;">✗ Rechazar</button>
+          ` : ''}
+        </div>
+      </div>`).join('');
+  } catch(e) { lista.innerHTML = '<div style="color:var(--danger);padding:20px;">Error</div>'; }
+}
+
+async function cambiarEstadoDonacion(id, estado) {
+  try {
+    await fetch(`/api/donaciones/${id}/estado`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ estado }) });
+    cargarDonaciones();
+  } catch(e) { showToast('❌ Error', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// USUARIOS
+// ══════════════════════════════════════════════════════════
+async function cargarUsuarios() {
+  const lista = document.getElementById('lista-usuarios');
+  try {
+    const res = await fetch('/api/usuarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    const users = data.usuarios || [];
+    lista.innerHTML = users.map(u => `
+      <div class="item-card">
+        <div style="flex:1;">
+          <div style="font-weight:700;color:var(--texto);margin-bottom:4px;">${u.nombre} <span class="badge-estado badge-${u.activo ? 'aprobado' : 'rechazado'}">${u.activo ? 'Activo' : 'Inactivo'}</span></div>
+          <div style="color:var(--texto3);font-size:0.85rem;">${u.email} · <strong>${u.rol}</strong></div>
+        </div>
+        <button onclick="eliminarUsuario(${u.id})" style="background:rgba(239,68,68,0.15);border:none;border-radius:8px;padding:8px 12px;color:#f87171;cursor:pointer;font-size:0.8rem;">🗑️</button>
+      </div>`).join('');
+  } catch(e) { lista.innerHTML = '<div style="color:var(--danger);padding:20px;">Error</div>'; }
+}
+
+function abrirModalUsuario() {
+  document.getElementById('usr-nombre').value = '';
+  document.getElementById('usr-email').value = '';
+  document.getElementById('usr-password').value = '';
+  document.getElementById('usr-rol').value = 'editor';
+  document.getElementById('modal-usuario').style.display = 'flex';
+}
+
+async function guardarUsuario() {
+  const nombre = document.getElementById('usr-nombre').value.trim();
+  const email = document.getElementById('usr-email').value.trim();
+  const password = document.getElementById('usr-password').value;
+  const rol = document.getElementById('usr-rol').value;
+  if (!nombre || !email || !password) { showToast('Completa todos los campos', 'error'); return; }
+  try {
+    const res = await fetch('/api/usuarios', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ nombre, email, password, rol }) });
+    if (!res.ok) { const d = await res.json(); throw new Error(d.message || 'Error'); }
+    showToast('✅ Usuario creado');
+    cerrarModal('modal-usuario');
+    cargarUsuarios();
+  } catch(e) { showToast(`❌ ${e.message}`, 'error'); }
+}
+
+async function eliminarUsuario(id) {
+  if (!confirm('¿Eliminar este usuario?')) return;
+  try {
+    await fetch(`/api/usuarios/${id}`, { method: 'DELETE', headers: authHeaders() });
+    showToast('🗑️ Usuario eliminado');
+    cargarUsuarios();
+  } catch(e) { showToast('❌ Error', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ══════════════════════════════════════════════════════════
+async function cargarConfiguracion() {
+  try {
+    const res = await fetch('/api/configuracion', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    const c = data.configuracion || {};
+    if (document.getElementById('cfg-banco')) document.getElementById('cfg-banco').value = c.banco_nombre || '';
+    if (document.getElementById('cfg-tipo')) document.getElementById('cfg-tipo').value = c.banco_tipo_cuenta || '';
+    if (document.getElementById('cfg-cuenta')) document.getElementById('cfg-cuenta').value = c.banco_numero_cuenta || '';
+    if (document.getElementById('cfg-nit')) document.getElementById('cfg-nit').value = c.banco_nit || '';
+    if (document.getElementById('cfg-razon')) document.getElementById('cfg-razon').value = c.banco_razon_social || '';
+  } catch(e) { console.error(e); }
+}
+
+async function guardarConfiguracion() {
+  try {
+    const updates = {
+      banco_nombre: document.getElementById('cfg-banco').value,
+      banco_tipo_cuenta: document.getElementById('cfg-tipo').value,
+      banco_numero_cuenta: document.getElementById('cfg-cuenta').value,
+      banco_nit: document.getElementById('cfg-nit').value,
+      banco_razon_social: document.getElementById('cfg-razon').value,
+    };
+    const res = await fetch('/api/configuracion', { method: 'POST', headers: authHeaders(), body: JSON.stringify(updates) });
+    if (!res.ok) throw new Error('Error');
+    showToast('✅ Configuración guardada');
+  } catch(e) { showToast('❌ Error guardando', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// TEXTOS DEL SITIO
+// ══════════════════════════════════════════════════════════
+let textosOriginales = {};
+let textosEditados = {};
+
+async function cargarTextosSitio() {
+  try {
+    const res = await fetch('/api/textos', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    textosOriginales = data.textos || {};
+    textosEditados = JSON.parse(JSON.stringify(textosOriginales));
+    renderizarFormularios(textosEditados);
+  } catch(e) {
+    document.getElementById('contenedor-textos').innerHTML = '<div style="color:var(--danger);padding:20px;">Error cargando textos</div>';
+  }
+}
+
+function renderizarFormularios(textos) {
+  const contenedor = document.getElementById('contenedor-textos');
+  const secciones = {
+    hero: { titulo: 'Página de Inicio (Hero)', icono: '🏠' },
+    quienes: { titulo: 'Quiénes Somos', icono: '👥' },
+    programas: { titulo: 'Programas', icono: '📚' },
+    contacto: { titulo: 'Contacto', icono: '📧' }
+  };
+  let html = '';
+  for (const [key, info] of Object.entries(secciones)) {
+    if (!textos[key]) continue;
+    html += `<div class="seccion-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border);">
+      <span style="font-size:1.8rem;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:12px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;">${info.icono}</span>
+      <span style="font-size:1.2rem;font-weight:800;color:var(--texto);">${info.titulo}</span></div>`;
+    for (const [clave, valor] of Object.entries(textos[key])) {
+      const esLargo = (valor || '').length > 80;
+      const label = clave.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+      html += `<div style="margin-bottom:20px;"><label class="campo-label">${label}</label>
+        ${esLargo
+          ? `<textarea class="campo-textarea" data-seccion="${key}" data-clave="${clave}" onchange="actualizarTexto(this)">${valor || ''}</textarea>`
+          : `<input type="text" class="campo-input" data-seccion="${key}" data-clave="${clave}" value="${(valor||'').replace(/"/g,'&quot;')}" onchange="actualizarTexto(this)"/>`
+        }</div>`;
+    }
+    html += '</div>';
+  }
+  contenedor.innerHTML = html || '<div style="padding:40px;text-align:center;color:var(--texto3);">No hay textos configurados.</div>';
+}
+
+function actualizarTexto(input) {
+  const s = input.dataset.seccion, c = input.dataset.clave;
+  if (!textosEditados[s]) textosEditados[s] = {};
+  textosEditados[s][c] = input.value;
+}
+
+async function guardarTodosLosTextos() {
+  if (!confirm('¿Guardar todos los cambios de texto?')) return;
+  try {
+    const res = await fetch('/api/textos/actualizar', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ textos: textosEditados })
+    });
+    if (!res.ok) throw new Error('Error');
+    textosOriginales = JSON.parse(JSON.stringify(textosEditados));
+    showToast('✅ Textos guardados correctamente');
+  } catch(e) { showToast('❌ Error guardando textos', 'error'); }
+}
 
 </script>
 </body>

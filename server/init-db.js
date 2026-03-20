@@ -7,12 +7,8 @@ async function initDatabase() {
   
   try {
     console.log('🚀 Iniciando creación de base de datos...\n');
-    
     await client.query('BEGIN');
 
-    // ══════════════════════════════════════════════════════════
-    // TABLA: usuarios
-    // ══════════════════════════════════════════════════════════
     console.log('📋 Creando tabla: usuarios');
     await client.query(`
       CREATE TABLE IF NOT EXISTS usuarios (
@@ -30,9 +26,6 @@ async function initDatabase() {
       CREATE INDEX IF NOT EXISTS idx_usuarios_rol ON usuarios(rol);
     `);
 
-    // ══════════════════════════════════════════════════════════
-    // TABLA: sesiones
-    // ══════════════════════════════════════════════════════════
     console.log('📋 Creando tabla: sesiones');
     await client.query(`
       CREATE TABLE IF NOT EXISTS sesiones (
@@ -43,9 +36,6 @@ async function initDatabase() {
       CREATE INDEX IF NOT EXISTS idx_sesiones_expire ON sesiones(expire);
     `);
 
-    // ══════════════════════════════════════════════════════════
-    // TABLA: publicaciones
-    // ══════════════════════════════════════════════════════════
     console.log('📋 Creando tabla: publicaciones');
     await client.query(`
       CREATE TABLE IF NOT EXISTS publicaciones (
@@ -64,9 +54,6 @@ async function initDatabase() {
       CREATE INDEX IF NOT EXISTS idx_publicaciones_categoria ON publicaciones(categoria);
     `);
 
-    // ══════════════════════════════════════════════════════════
-    // TABLA: mensajes_contacto
-    // ══════════════════════════════════════════════════════════
     console.log('📋 Creando tabla: mensajes_contacto');
     await client.query(`
       CREATE TABLE IF NOT EXISTS mensajes_contacto (
@@ -81,9 +68,6 @@ async function initDatabase() {
       CREATE INDEX IF NOT EXISTS idx_mensajes_estado ON mensajes_contacto(estado);
     `);
 
-    // ══════════════════════════════════════════════════════════
-    // TABLA: donaciones
-    // ══════════════════════════════════════════════════════════
     console.log('📋 Creando tabla: donaciones');
     await client.query(`
       CREATE TABLE IF NOT EXISTS donaciones (
@@ -101,9 +85,6 @@ async function initDatabase() {
       CREATE INDEX IF NOT EXISTS idx_donaciones_fecha ON donaciones(creado_en);
     `);
 
-    // ══════════════════════════════════════════════════════════
-    // TABLA: voluntarios
-    // ══════════════════════════════════════════════════════════
     console.log('📋 Creando tabla: voluntarios');
     await client.query(`
       CREATE TABLE IF NOT EXISTS voluntarios (
@@ -119,9 +100,6 @@ async function initDatabase() {
       CREATE INDEX IF NOT EXISTS idx_voluntarios_estado ON voluntarios(estado);
     `);
 
-    // ══════════════════════════════════════════════════════════
-    // TABLA: configuracion_sitio
-    // ══════════════════════════════════════════════════════════
     console.log('📋 Creando tabla: configuracion_sitio');
     await client.query(`
       CREATE TABLE IF NOT EXISTS configuracion_sitio (
@@ -132,9 +110,6 @@ async function initDatabase() {
       );
     `);
 
-    // ══════════════════════════════════════════════════════════
-    // TABLA: textos_sitio
-    // ══════════════════════════════════════════════════════════
     console.log('📋 Creando tabla: textos_sitio');
     await client.query(`
       CREATE TABLE IF NOT EXISTS textos_sitio (
@@ -148,11 +123,19 @@ async function initDatabase() {
       CREATE INDEX IF NOT EXISTS idx_textos_seccion ON textos_sitio(seccion);
     `);
 
-    // ══════════════════════════════════════════════════════════
-    // CREAR USUARIO ADMINISTRADOR INICIAL
-    // ══════════════════════════════════════════════════════════
+    console.log('📋 Creando tabla: galeria');
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS galeria (
+        id SERIAL PRIMARY KEY,
+        titulo VARCHAR(255),
+        descripcion TEXT,
+        imagen_url VARCHAR(500),
+        orden INTEGER DEFAULT 0,
+        creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     console.log('\n👤 Creando usuario administrador inicial...');
-    
     const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'admin@jotherma.org';
     const adminPassword = process.env.INITIAL_ADMIN_PASSWORD || 'Admin123456!';
     const passwordHash = await bcrypt.hash(adminPassword, 10);
@@ -164,41 +147,38 @@ async function initDatabase() {
     `, ['Administrador Principal', adminEmail, passwordHash, 'superadmin']);
 
     console.log(`   ✓ Admin creado: ${adminEmail}`);
-    console.log(`   ⚠️  IMPORTANTE: Cambia la contraseña después del primer login\n`);
 
-    // ══════════════════════════════════════════════════════════
-    // INSERTAR CONFIGURACIÓN INICIAL
-    // ══════════════════════════════════════════════════════════
-    console.log('⚙️  Insertando configuración inicial del sitio...');
+    console.log('⚙️  Insertando configuración inicial...');
     await client.query(`
       INSERT INTO configuracion_sitio (clave, valor, tipo) VALUES
-        ('banco_nombre', 'Banco Ejemplo', 'texto'),
+        ('banco_nombre', 'Bancolombia', 'texto'),
         ('banco_tipo_cuenta', 'Ahorros', 'texto'),
-        ('banco_numero_cuenta', '1234567890', 'texto'),
-        ('banco_nit', '900123456-7', 'texto'),
-        ('banco_razon_social', 'Fundación JOTHERMA', 'texto'),
+        ('banco_numero_cuenta', '000-000000-00', 'texto'),
+        ('banco_nit', '000.000.000-0', 'texto'),
+        ('banco_razon_social', 'Fundación Jóvenes Trabajando Como Hermanos', 'texto'),
         ('pasarela_pago', 'mercadopago', 'texto')
       ON CONFLICT (clave) DO NOTHING
     `);
 
-    // ══════════════════════════════════════════════════════════
-    // INSERTAR TEXTOS POR DEFECTO
-    // ══════════════════════════════════════════════════════════
-    console.log('📝 Insertando textos por defecto del sitio...');
+    console.log('📝 Insertando textos por defecto...');
     await client.query(`
       INSERT INTO textos_sitio (seccion, clave, valor) VALUES
-        ('hero', 'titulo', 'Fundación JOTHERMA'),
-        ('hero', 'subtitulo', 'Jóvenes Trabajando Como Hermanos'),
-        ('hero', 'descripcion', 'Trabajamos junto a niños, jóvenes y comunidades vulnerables de toda Colombia.'),
-        ('quienes', 'titulo', 'Quiénes Somos'),
-        ('quienes', 'descripcion', 'Somos una organización sin ánimo de lucro dedicada a transformar vidas.'),
-        ('programas', 'titulo', 'Nuestros Programas'),
-        ('programas', 'educacion_nombre', 'Educación'),
-        ('programas', 'educacion_desc', 'Apoyo escolar y becas para niños y jóvenes.'),
-        ('programas', 'nutricion_nombre', 'Nutrición'),
-        ('programas', 'nutricion_desc', 'Alimentación balanceada para comunidades vulnerables.'),
-        ('programas', 'deporte_nombre', 'Deporte'),
-        ('programas', 'deporte_desc', 'Actividades deportivas para el desarrollo integral.'),
+        ('hero', 'titulo', 'Transformando vidas en'),
+        ('hero', 'titulo_destacado', 'Colombia'),
+        ('hero', 'descripcion', 'Trabajamos junto a niños, jóvenes y comunidades vulnerables de toda Colombia, construyendo oportunidades reales de educación, desarrollo y dignidad.'),
+        ('hero', 'stat1_num', '+500'),
+        ('hero', 'stat1_label', 'Beneficiarios'),
+        ('hero', 'stat2_num', '6'),
+        ('hero', 'stat2_label', 'Programas activos'),
+        ('hero', 'stat3_num', '10+'),
+        ('hero', 'stat3_label', 'Comunidades en Colombia'),
+        ('hero', 'stat4_num', '100%'),
+        ('hero', 'stat4_label', 'Impacto local'),
+        ('quienes', 'titulo', 'Una fundación que trabaja unida, como hermanos'),
+        ('quienes', 'descripcion1', 'La Fundación Jóvenes Trabajando Como Hermanos — JOTHERMA — nació del convencimiento de que el trabajo solidario y colectivo es la herramienta más poderosa para transformar realidades.'),
+        ('quienes', 'descripcion2', 'Creemos en el potencial de cada persona y en la fuerza de la comunidad como motor de cambio sostenible.'),
+        ('quienes', 'mision', 'Promover el desarrollo humano integral de comunidades vulnerables de Colombia, a través de programas educativos, sociales y culturales que generen bienestar y equidad.'),
+        ('quienes', 'vision', 'Ser una fundación referente en Colombia por su impacto social sostenible, reconocida por transformar vidas con transparencia, amor y compromiso.'),
         ('contacto', 'titulo', 'Contáctanos'),
         ('contacto', 'email', 'info@jotherma.org'),
         ('contacto', 'telefono', '+57 300 123 4567'),
@@ -207,7 +187,6 @@ async function initDatabase() {
     `);
 
     await client.query('COMMIT');
-
     console.log('\n✅ Base de datos inicializada exitosamente!');
     console.log('═══════════════════════════════════════════════════════\n');
     
@@ -224,10 +203,7 @@ async function initDatabase() {
 if (require.main === module) {
   initDatabase()
     .then(() => process.exit(0))
-    .catch((err) => {
-      console.error(err);
-      process.exit(1);
-    });
+    .catch((err) => { console.error(err); process.exit(1); });
 }
 
 module.exports = initDatabase;

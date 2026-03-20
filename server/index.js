@@ -9,14 +9,12 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Necesario para Railway/Heroku/proxies inversos
+// Necesario para Railway/proxies inversos
 app.set('trust proxy', 1);
 
 // ══════════════════════════════════════════════════════════
 // MIDDLEWARES DE SEGURIDAD
 // ══════════════════════════════════════════════════════════
-
-// Helmet para headers de seguridad
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -30,13 +28,11 @@ app.use(helmet({
   },
 }));
 
-// CORS
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
 
-// Rate limiting - protección contra fuerza bruta
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -52,13 +48,12 @@ const loginLimiter = rateLimit({
 app.use('/api/', limiter);
 app.use('/api/auth/login', loginLimiter);
 
-// Parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // ══════════════════════════════════════════════════════════
-// SERVIR ARCHIVOS ESTÁTICOS
+// ARCHIVOS ESTÁTICOS
 // ══════════════════════════════════════════════════════════
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -73,6 +68,7 @@ const mensajesRoutes = require('./routes/mensajes');
 const donacionesRoutes = require('./routes/donaciones');
 const voluntariosRoutes = require('./routes/voluntarios');
 const configuracionRoutes = require('./routes/configuracion');
+const galeriaRoutes = require('./routes/galeria');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuariosRoutes);
@@ -82,20 +78,17 @@ app.use('/api/mensajes', mensajesRoutes);
 app.use('/api/donaciones', donacionesRoutes);
 app.use('/api/voluntarios', voluntariosRoutes);
 app.use('/api/configuracion', configuracionRoutes);
+app.use('/api/galeria', galeriaRoutes);
 
 // ══════════════════════════════════════════════════════════
-// RUTA DE SALUD DEL SERVIDOR
+// SALUD DEL SERVIDOR
 // ══════════════════════════════════════════════════════════
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV 
-  });
+  res.json({ status: 'ok', timestamp: new Date().toISOString(), environment: process.env.NODE_ENV });
 });
 
 // ══════════════════════════════════════════════════════════
-// RUTAS EXPLÍCITAS PARA PÁGINAS HTML
+// PÁGINAS HTML
 // ══════════════════════════════════════════════════════════
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/admin.html'));
@@ -104,17 +97,11 @@ app.get('/admin.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/admin.html'));
 });
 
-// ══════════════════════════════════════════════════════════
-// FALLBACK PARA SPA
-// ══════════════════════════════════════════════════════════
 app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api/')) {
-    return next();
-  }
+  if (req.path.startsWith('/api/')) return next();
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Ruta 404 solo para rutas de API
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
 });
@@ -141,7 +128,6 @@ app.listen(PORT, () => {
   console.log('═══════════════════════════════════════════════════════\n');
 });
 
-// Manejo de errores no capturados
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Promise Rejection:', err);
   process.exit(1);
