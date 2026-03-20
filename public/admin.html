@@ -1719,5 +1719,132 @@ async function guardarConfiguracion() {
 
 
 </script>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: PUBLICACIÓN
+     ══════════════════════════════════════════════════════════ -->
+<div id="modal-publicacion" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);">
+  <div style="background:var(--bg2);border-radius:20px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;padding:32px;position:relative;">
+    <button onclick="cerrarModal('modal-publicacion')" style="position:absolute;top:16px;right:16px;background:var(--bg3);border:none;border-radius:8px;padding:8px 12px;color:var(--texto);cursor:pointer;font-size:1.1rem;">✕</button>
+    <h3 id="modal-pub-titulo" style="color:var(--texto);font-size:1.4rem;font-weight:800;margin-bottom:24px;">Nueva Publicación</h3>
+
+    <input type="hidden" id="pub-id"/>
+
+    <div style="margin-bottom:16px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">TÍTULO *</label>
+      <input id="pub-titulo" type="text" placeholder="Título de la publicación" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;"/>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">CATEGORÍA</label>
+      <select id="pub-categoria" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;">
+        <option value="">Selecciona una categoría</option>
+        <option value="Educación">Educación</option>
+        <option value="Nutrición">Nutrición</option>
+        <option value="Deporte">Deporte</option>
+        <option value="Salud">Salud</option>
+        <option value="Cultura">Cultura</option>
+        <option value="Comunidad">Comunidad</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">ESTADO</label>
+      <select id="pub-estado" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;">
+        <option value="borrador">Borrador</option>
+        <option value="publicado">Publicado</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">CONTENIDO *</label>
+      <textarea id="pub-contenido" rows="6" placeholder="Escribe el contenido de la publicación..." style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;resize:vertical;font-family:inherit;"></textarea>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">IMAGEN (opcional)</label>
+      <input id="pub-imagen" type="file" accept="image/*" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--texto);font-size:0.9rem;cursor:pointer;"/>
+      <div id="pub-imagen-preview" style="margin-top:10px;"></div>
+    </div>
+
+    <div style="display:flex;gap:12px;justify-content:flex-end;">
+      <button onclick="cerrarModal('modal-publicacion')" style="background:var(--bg3);border:none;border-radius:10px;padding:12px 24px;color:var(--texto);cursor:pointer;font-weight:600;">Cancelar</button>
+      <button onclick="guardarPublicacion()" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border:none;border-radius:10px;padding:12px 24px;color:#fff;cursor:pointer;font-weight:700;">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: GALERÍA
+     ══════════════════════════════════════════════════════════ -->
+<div id="modal-galeria" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);">
+  <div style="background:var(--bg2);border-radius:20px;width:100%;max-width:520px;padding:32px;position:relative;">
+    <button onclick="cerrarModal('modal-galeria')" style="position:absolute;top:16px;right:16px;background:var(--bg3);border:none;border-radius:8px;padding:8px 12px;color:var(--texto);cursor:pointer;font-size:1.1rem;">✕</button>
+    <h3 style="color:var(--texto);font-size:1.4rem;font-weight:800;margin-bottom:24px;">📸 Agregar Foto</h3>
+
+    <input type="hidden" id="gal-id"/>
+
+    <div style="margin-bottom:16px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">TÍTULO</label>
+      <input id="gal-titulo" type="text" placeholder="Título de la foto (opcional)" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;"/>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">DESCRIPCIÓN</label>
+      <input id="gal-descripcion" type="text" placeholder="Descripción breve (opcional)" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;"/>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">IMAGEN *</label>
+      <input id="gal-imagen" type="file" accept="image/*" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--texto);font-size:0.9rem;cursor:pointer;"/>
+      <div id="gal-imagen-preview" style="margin-top:10px;"></div>
+    </div>
+
+    <div style="display:flex;gap:12px;justify-content:flex-end;">
+      <button onclick="cerrarModal('modal-galeria')" style="background:var(--bg3);border:none;border-radius:10px;padding:12px 24px;color:var(--texto);cursor:pointer;font-weight:600;">Cancelar</button>
+      <button onclick="guardarFotoGaleria()" style="background:linear-gradient(135deg,var(--secondary),#1d4ed8);border:none;border-radius:10px;padding:12px 24px;color:#fff;cursor:pointer;font-weight:700;">📤 Subir Foto</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: USUARIO
+     ══════════════════════════════════════════════════════════ -->
+<div id="modal-usuario" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);">
+  <div style="background:var(--bg2);border-radius:20px;width:100%;max-width:480px;padding:32px;position:relative;">
+    <button onclick="cerrarModal('modal-usuario')" style="position:absolute;top:16px;right:16px;background:var(--bg3);border:none;border-radius:8px;padding:8px 12px;color:var(--texto);cursor:pointer;font-size:1.1rem;">✕</button>
+    <h3 style="color:var(--texto);font-size:1.4rem;font-weight:800;margin-bottom:24px;">👤 Nuevo Usuario</h3>
+
+    <div style="margin-bottom:16px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">NOMBRE *</label>
+      <input id="usr-nombre" type="text" placeholder="Nombre completo" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;"/>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">EMAIL *</label>
+      <input id="usr-email" type="email" placeholder="correo@ejemplo.com" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;"/>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">CONTRASEÑA *</label>
+      <input id="usr-password" type="password" placeholder="Mínimo 6 caracteres" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;"/>
+    </div>
+
+    <div style="margin-bottom:24px;">
+      <label style="display:block;color:var(--texto2);font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase;">ROL</label>
+      <select id="usr-rol" style="width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--texto);font-size:0.95rem;outline:none;">
+        <option value="editor">Editor</option>
+        <option value="admin">Admin</option>
+        <option value="superadmin">Super Admin</option>
+      </select>
+    </div>
+
+    <div style="display:flex;gap:12px;justify-content:flex-end;">
+      <button onclick="cerrarModal('modal-usuario')" style="background:var(--bg3);border:none;border-radius:10px;padding:12px 24px;color:var(--texto);cursor:pointer;font-weight:600;">Cancelar</button>
+      <button onclick="guardarUsuario()" style="background:linear-gradient(135deg,var(--purple),#7c3aed);border:none;border-radius:10px;padding:12px 24px;color:#fff;cursor:pointer;font-weight:700;">✅ Crear Usuario</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
