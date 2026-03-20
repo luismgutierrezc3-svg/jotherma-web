@@ -714,6 +714,29 @@ body {
           <h2 style="color:var(--texto); margin-bottom:20px;">⚙️ Configuración</h2>
           <p style="color:var(--texto2);">Ajustes generales del sitio.</p>
         </div>
+
+        <div id="panel-textos" class="panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+            <div>
+              <h2 style="color:var(--texto); font-size:1.8rem; font-weight:800; margin-bottom:8px;">
+                📝 Textos del Sitio Web
+              </h2>
+              <p style="color:var(--texto2); font-size:0.95rem;">
+                Edita los textos que aparecen en tu sitio web público sin tocar código
+              </p>
+            </div>
+            <button onclick="guardarTodosLosTextos()" style="background:linear-gradient(135deg, var(--success), #059669); color:#fff; border:none; border-radius:12px; padding:14px 28px; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 16px rgba(16, 185, 129, 0.3);">
+              💾 Guardar Todos los Cambios
+            </button>
+          </div>
+          <div id="contenedor-textos">
+            <div style="text-align:center; padding:60px 20px; color:var(--texto3);">
+              <div style="font-size:3rem; margin-bottom:16px;">⏳</div>
+              <div style="font-weight:600;">Cargando textos del sitio...</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -881,83 +904,8 @@ function showToast(message, type = 'success') {
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 3000);
 }
-<!-- ══════════════════════════════════════════════════════════
-     PANEL: TEXTOS DEL SITIO
-     
-     Agregar esto en el archivo: public/admin.html
-     Dentro de la sección <div class="page-content">
-     ══════════════════════════════════════════════════════════ -->
 
-<div id="panel-textos" class="panel">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
-    <div>
-      <h2 style="color:var(--texto); font-size:1.8rem; font-weight:800; margin-bottom:8px;">
-        📝 Textos del Sitio Web
-      </h2>
-      <p style="color:var(--texto2); font-size:0.95rem;">
-        Edita los textos que aparecen en tu sitio web público sin tocar código
-      </p>
-    </div>
-    <button onclick="guardarTodosLosTextos()" style="
-      background:linear-gradient(135deg, var(--success), #059669);
-      color:#fff;
-      border:none;
-      border-radius:12px;
-      padding:14px 28px;
-      font-weight:700;
-      font-size:0.95rem;
-      cursor:pointer;
-      transition:all 0.3s;
-      box-shadow:0 4px 16px rgba(16, 185, 129, 0.3);
-    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(16, 185, 129, 0.4)'"
-       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(16, 185, 129, 0.3)'">
-      💾 Guardar Todos los Cambios
-    </button>
-  </div>
-
-  <!-- Alerta informativa -->
-  <div style="
-    background:linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1));
-    border:2px solid rgba(59, 130, 246, 0.3);
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:32px;
-    display:flex;
-    align-items:flex-start;
-    gap:16px;
-  ">
-    <span style="font-size:2rem;">💡</span>
-    <div>
-      <div style="font-weight:700; color:var(--secondary); margin-bottom:6px;">
-        ¿Cómo funciona?
-      </div>
-      <div style="color:var(--texto2); font-size:0.9rem; line-height:1.6;">
-        Edita los textos en los campos de abajo y haz click en "Guardar". Los cambios se verán 
-        reflejados inmediatamente en tu sitio web público. ¡No necesitas saber programación!
-      </div>
-    </div>
-  </div>
-
-  <div id="contenedor-textos">
-    <!-- Aquí se cargarán dinámicamente los formularios de textos -->
-    <div style="text-align:center; padding:60px 20px; color:var(--texto3);">
-      <div style="font-size:3rem; margin-bottom:16px;">⏳</div>
-      <div style="font-weight:600;">Cargando textos del sitio...</div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════════
-     TAMBIÉN AGREGAR ESTE BOTÓN EN EL SIDEBAR
-     En la sección nav-group donde dice "Contenido"
-     ══════════════════════════════════════════════════════════ -->
-
-<!--
-<button class="nav-item" onclick="showPanel('textos', this)">
-  <span class="icon">📝</span>
-  <span>Textos del Sitio</span>
-</button>
--->
+</script>
 
 <style>
 /* Estilos para las tarjetas de secciones */
