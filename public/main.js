@@ -144,3 +144,21 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// =========================
+// COOKIES BANNER
+// =========================
+document.querySelector('.btn-accept').addEventListener('click', () => {
+  document.getElementById('cookies-banner').style.display = 'none';
+  localStorage.setItem('cookies-accepted', 'true');
+});
+
+document.querySelector('.btn-reject').addEventListener('click', () => {
+  document.getElementById('cookies-banner').style.display = 'none';
+  localStorage.setItem('cookies-accepted', 'essential');
+});
+
+// Ocultar si ya aceptó antes
+if (localStorage.getItem('cookies-accepted')) {
+  document.getElementById('cookies-banner').style.display = 'none';
+}
