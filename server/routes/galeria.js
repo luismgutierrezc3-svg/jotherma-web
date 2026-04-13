@@ -1,113 +1,69 @@
 const express = require('express');
 const router = express.Router();
-const { query } = require('../../config/database');
-const { verificarToken, verificarPermiso } = require('../middleware/auth');
-const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { pool } = require('../config/database');
+const { verificarToken } = require('../middleware/auth');
 
-// Configurar Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Multer en memoria
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });
 
-// ── Subir imagen a Cloudinary ──────────────────────────────
-router.post('/upload', verificarToken, upload.single('imagen'), async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No se recibió imagen' });
+function subirACloudinary(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: 'image', transformation: [{ quality: 'auto', fetch_format: 'auto' }] },
+      (error, result) => { if (error) reject(error); else resolve(result); }
+    );
+    stream.end(buffer);
+  });
+}
 
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: 'jotherma', resource_type: 'image' },
-        (error, result) => error ? reject(error) : resolve(result)
-      );
-      stream.end(req.file.buffer);
-    });
-
-    res.json({ success: true, url: result.secure_url, public_id: result.public_id });
-  } catch (error) {
-    console.error('Error subiendo imagen:', error);
-    res.status(500).json({ error: 'Error subiendo imagen' });
-  }
-});
-
-// ── Obtener galería ────────────────────────────────────────
+// GET /api/galeria — listar fotos (público)
 router.get('/', async (req, res) => {
   try {
-    const result = await query('SELECT * FROM galeria ORDER BY orden ASC, creado_en DESC');
-    res.json({ success: true, galeria: result.rows });
-  } catch (error) {
+    const result = await pool.query('SELECT * FROM galeria ORDER BY orden ASC, creado_en DESC');
+    res.json({ fotos: result.rows });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Error obteniendo galería' });
   }
 });
 
-// ── Crear ítem de galería ──────────────────────────────────
+// POST /api/galeria — subir foto
 router.post('/', verificarToken, upload.single('imagen'), async (req, res) => {
+  const { titulo, descripcion } = req.body;
+
+  if (!req.file) return res.status(400).json({ error: 'La imagen es requerida' });
+
   try {
-    const { titulo, descripcion, orden } = req.body;
-    let imagen_url = req.body.imagen_url || null;
+    const resultado = await subirACloudinary(req.file.buffer, 'jotherma/galeria');
 
-    if (req.file) {
-      const result = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: 'jotherma/galeria', resource_type: 'image' },
-          (error, result) => error ? reject(error) : resolve(result)
-        );
-        stream.end(req.file.buffer);
-      });
-      imagen_url = result.secure_url;
-    }
-
-    const r = await query(
-      'INSERT INTO galeria (titulo, descripcion, imagen_url, orden) VALUES ($1, $2, $3, $4) RETURNING *',
-      [titulo, descripcion, imagen_url, orden || 0]
+    const result = await pool.query(
+      'INSERT INTO galeria (titulo, descripcion, imagen_url) VALUES ($1, $2, $3) RETURNING *',
+      [titulo || '', descripcion || '', resultado.secure_url]
     );
-    res.status(201).json({ success: true, item: r.rows[0] });
-  } catch (error) {
-    res.status(500).json({ error: 'Error creando item de galería' });
+
+    res.status(201).json({ foto: result.rows[0], mensaje: 'Foto agregada a la galería' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error subiendo foto' });
   }
 });
 
-// ── Actualizar ítem ────────────────────────────────────────
-router.put('/:id', verificarToken, upload.single('imagen'), async (req, res) => {
-  try {
-    const { titulo, descripcion, orden } = req.body;
-    let imagen_url = req.body.imagen_url || null;
-
-    if (req.file) {
-      const result = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: 'jotherma/galeria', resource_type: 'image' },
-          (error, result) => error ? reject(error) : resolve(result)
-        );
-        stream.end(req.file.buffer);
-      });
-      imagen_url = result.secure_url;
-    }
-
-    const r = await query(
-      `UPDATE galeria SET titulo=$1, descripcion=$2, ${imagen_url ? 'imagen_url=$3,' : ''} orden=${imagen_url ? '$4' : '$3'} WHERE id=${imagen_url ? '$5' : '$4'} RETURNING *`,
-      imagen_url
-        ? [titulo, descripcion, imagen_url, orden || 0, req.params.id]
-        : [titulo, descripcion, orden || 0, req.params.id]
-    );
-    res.json({ success: true, item: r.rows[0] });
-  } catch (error) {
-    res.status(500).json({ error: 'Error actualizando item' });
-  }
-});
-
-// ── Eliminar ítem ──────────────────────────────────────────
+// DELETE /api/galeria/:id — eliminar foto
 router.delete('/:id', verificarToken, async (req, res) => {
+  const { id } = req.params;
   try {
-    await query('DELETE FROM galeria WHERE id = $1', [req.params.id]);
-    res.json({ success: true, message: 'Item eliminado' });
-  } catch (error) {
-    res.status(500).json({ error: 'Error eliminando item' });
+    await pool.query('DELETE FROM galeria WHERE id = $1', [id]);
+    res.json({ mensaje: 'Foto eliminada' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error eliminando foto' });
   }
 });
 

@@ -1,35 +1,59 @@
 const express = require('express');
 const router = express.Router();
-const { query } = require('../../config/database');
-const { verificarToken, verificarPermiso } = require('../middleware/auth');
+const { pool } = require('../config/database');
+const { verificarToken } = require('../middleware/auth');
 
-router.use(verificarToken);
-
-router.get('/', async (req, res) => {
+// GET /api/configuracion — obtener configuración
+router.get('/', verificarToken, async (req, res) => {
   try {
-    const result = await query('SELECT * FROM configuracion_sitio');
-    const config = {};
-    result.rows.forEach(row => {
-      config[row.clave] = row.valor;
-    });
-    res.json({ success: true, configuracion: config });
-  } catch (error) {
+    const result = await pool.query('SELECT clave, valor FROM configuracion_sitio');
+
+    const configuracion = {};
+    for (const row of result.rows) {
+      configuracion[row.clave] = row.valor;
+    }
+
+    res.json({ configuracion });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Error obteniendo configuración' });
   }
 });
 
-router.post('/', verificarPermiso('finanzas'), async (req, res) => {
+// POST /api/configuracion — guardar configuración
+router.post('/', verificarToken, async (req, res) => {
+  const updates = req.body;
+
+  if (!updates || typeof updates !== 'object') {
+    return res.status(400).json({ error: 'Datos inválidos' });
+  }
+
   try {
-    const updates = req.body;
-    for (const [clave, valor] of Object.entries(updates)) {
-      await query(
-        'INSERT INTO configuracion_sitio (clave, valor) VALUES ($1, $2) ON CONFLICT (clave) DO UPDATE SET valor = $2, actualizado_en = CURRENT_TIMESTAMP',
-        [clave, valor]
-      );
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      for (const [clave, valor] of Object.entries(updates)) {
+        await client.query(
+          `INSERT INTO configuracion_sitio (clave, valor, actualizado_en)
+           VALUES ($1, $2, CURRENT_TIMESTAMP)
+           ON CONFLICT (clave)
+           DO UPDATE SET valor = $2, actualizado_en = CURRENT_TIMESTAMP`,
+          [clave, valor || '']
+        );
+      }
+
+      await client.query('COMMIT');
+      res.json({ mensaje: 'Configuración guardada correctamente' });
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
     }
-    res.json({ success: true, message: 'Configuración actualizada' });
-  } catch (error) {
-    res.status(500).json({ error: 'Error actualizando configuración' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error guardando configuración' });
   }
 });
 

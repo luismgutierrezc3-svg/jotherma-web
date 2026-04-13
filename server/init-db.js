@@ -92,8 +92,11 @@ async function initDatabase() {
         nombre VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         telefono VARCHAR(50),
+        ciudad VARCHAR(255),
+        area_interes VARCHAR(255),
         programa VARCHAR(255),
         disponibilidad VARCHAR(500),
+        mensaje TEXT,
         estado VARCHAR(50) DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'aprobado', 'rechazado')),
         creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );

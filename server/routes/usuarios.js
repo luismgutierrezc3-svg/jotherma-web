@@ -1,149 +1,69 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const { query } = require('../../config/database');
-const { verificarToken, verificarRol } = require('../middleware/auth');
+const { pool } = require('../config/database');
+const { verificarToken, soloSuperAdmin } = require('../middleware/auth');
 
-// Todas las rutas requieren autenticación
-router.use(verificarToken);
-
-// ══════════════════════════════════════════════════════════
-// LISTAR USUARIOS (solo superadmin)
-// ══════════════════════════════════════════════════════════
-router.get('/', verificarRol('superadmin'), async (req, res) => {
+// GET /api/usuarios — listar todos
+router.get('/', verificarToken, soloSuperAdmin, async (req, res) => {
   try {
-    const result = await query(`
-      SELECT id, nombre, email, rol, activo, ultimo_acceso, creado_en
-      FROM usuarios
-      ORDER BY creado_en DESC
-    `);
-
-    res.json({
-      success: true,
-      usuarios: result.rows
-    });
-  } catch (error) {
-    console.error('Error listando usuarios:', error);
+    const result = await pool.query(
+      'SELECT id, nombre, email, rol, activo, ultimo_acceso, creado_en FROM usuarios ORDER BY creado_en DESC'
+    );
+    res.json({ usuarios: result.rows });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Error obteniendo usuarios' });
   }
 });
 
-// ══════════════════════════════════════════════════════════
-// CREAR USUARIO (solo superadmin)
-// ══════════════════════════════════════════════════════════
-router.post('/', verificarRol('superadmin'), async (req, res) => {
+// POST /api/usuarios — crear usuario
+router.post('/', verificarToken, soloSuperAdmin, async (req, res) => {
+  const { nombre, email, password, rol } = req.body;
+
+  if (!nombre || !email || !password) {
+    return res.status(400).json({ error: 'Nombre, email y contraseña son requeridos' });
+  }
+
+  const rolesValidos = ['superadmin', 'admin', 'editor', 'viewer'];
+  if (rol && !rolesValidos.includes(rol)) {
+    return res.status(400).json({ error: 'Rol inválido' });
+  }
+
   try {
-    const { nombre, email, password, rol } = req.body;
-
-    if (!nombre || !email || !password || !rol) {
-      return res.status(400).json({ 
-        error: 'Datos incompletos',
-        message: 'Todos los campos son requeridos' 
-      });
+    const existe = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email.toLowerCase()]);
+    if (existe.rows.length > 0) {
+      return res.status(409).json({ error: 'Ya existe un usuario con ese email' });
     }
 
-    // Verificar que el rol sea válido
-    if (!['superadmin', 'editor', 'viewer'].includes(rol)) {
-      return res.status(400).json({ 
-        error: 'Rol inválido',
-        message: 'El rol debe ser: superadmin, editor o viewer' 
-      });
-    }
-
-    // Verificar si el email ya existe
-    const existente = await query('SELECT id FROM usuarios WHERE email = $1', [email]);
-    if (existente.rows.length > 0) {
-      return res.status(400).json({ 
-        error: 'Email duplicado',
-        message: 'Ya existe un usuario con este email' 
-      });
-    }
-
-    // Hashear contraseña
     const passwordHash = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      `INSERT INTO usuarios (nombre, email, password_hash, rol)
+       VALUES ($1, $2, $3, $4) RETURNING id, nombre, email, rol, creado_en`,
+      [nombre.trim(), email.toLowerCase().trim(), passwordHash, rol || 'editor']
+    );
 
-    // Crear usuario
-    const result = await query(`
-      INSERT INTO usuarios (nombre, email, password_hash, rol)
-      VALUES ($1, $2, $3, $4)
-      RETURNING id, nombre, email, rol, creado_en
-    `, [nombre, email, passwordHash, rol]);
-
-    res.status(201).json({
-      success: true,
-      message: 'Usuario creado exitosamente',
-      usuario: result.rows[0]
-    });
-
-  } catch (error) {
-    console.error('Error creando usuario:', error);
+    res.status(201).json({ usuario: result.rows[0], mensaje: 'Usuario creado correctamente' });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Error creando usuario' });
   }
 });
 
-// ══════════════════════════════════════════════════════════
-// ACTUALIZAR USUARIO (solo superadmin)
-// ══════════════════════════════════════════════════════════
-router.put('/:id', verificarRol('superadmin'), async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { nombre, email, rol, activo } = req.body;
+// DELETE /api/usuarios/:id — eliminar usuario
+router.delete('/:id', verificarToken, soloSuperAdmin, async (req, res) => {
+  const { id } = req.params;
 
-    const result = await query(`
-      UPDATE usuarios 
-      SET nombre = COALESCE($1, nombre),
-          email = COALESCE($2, email),
-          rol = COALESCE($3, rol),
-          activo = COALESCE($4, activo),
-          actualizado_en = CURRENT_TIMESTAMP
-      WHERE id = $5
-      RETURNING id, nombre, email, rol, activo
-    `, [nombre, email, rol, activo, id]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    res.json({
-      success: true,
-      message: 'Usuario actualizado',
-      usuario: result.rows[0]
-    });
-
-  } catch (error) {
-    console.error('Error actualizando usuario:', error);
-    res.status(500).json({ error: 'Error actualizando usuario' });
+  // No puede eliminarse a sí mismo
+  if (parseInt(id) === req.usuario.id) {
+    return res.status(400).json({ error: 'No puedes eliminarte a ti mismo' });
   }
-});
 
-// ══════════════════════════════════════════════════════════
-// ELIMINAR USUARIO (solo superadmin)
-// ══════════════════════════════════════════════════════════
-router.delete('/:id', verificarRol('superadmin'), async (req, res) => {
   try {
-    const { id } = req.params;
-
-    // No permitir eliminar el propio usuario
-    if (parseInt(id) === req.usuario.id) {
-      return res.status(400).json({ 
-        error: 'Operación no permitida',
-        message: 'No puedes eliminar tu propio usuario' 
-      });
-    }
-
-    const result = await query('DELETE FROM usuarios WHERE id = $1 RETURNING id', [id]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    res.json({
-      success: true,
-      message: 'Usuario eliminado'
-    });
-
-  } catch (error) {
-    console.error('Error eliminando usuario:', error);
+    await pool.query('UPDATE usuarios SET activo = false WHERE id = $1', [id]);
+    res.json({ mensaje: 'Usuario desactivado correctamente' });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Error eliminando usuario' });
   }
 });
