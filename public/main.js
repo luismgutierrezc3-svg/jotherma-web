@@ -22,10 +22,95 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log("TEXTOS:", t);
 
+    // =========================
     // HERO
-    if (t.hero && t.hero.descripcion) {
-      const el = document.getElementById('txt-hero-subtitulo');
-      if (el) el.textContent = t.hero.descripcion;
+    // =========================
+    if (t.hero) {
+
+      // TÍTULO
+      if (t.hero.titulo) {
+        const el = document.getElementById('txt-hero-titulo');
+        if (el) el.innerHTML = t.hero.titulo;
+      }
+
+      // SUBTÍTULO
+      if (t.hero.descripcion) {
+        const el = document.getElementById('txt-hero-subtitulo');
+        if (el) el.textContent = t.hero.descripcion;
+      }
+
+    }
+
+    // =========================
+    // QUIÉNES SOMOS
+    // =========================
+    if (t.quienes) {
+
+      if (t.quienes.titulo) {
+        const el = document.getElementById('txt-quienes-titulo');
+        if (el) el.textContent = t.quienes.titulo;
+      }
+
+      if (t.quienes.descripcion) {
+        const el = document.getElementById('txt-quienes-desc');
+        if (el) el.textContent = t.quienes.descripcion;
+      }
+
+    }
+
+    // =========================
+    // PROGRAMAS
+    // =========================
+    if (t.programas && Array.isArray(t.programas)) {
+
+      const container = document.getElementById('programas-container');
+
+      if (container) {
+        container.innerHTML = '';
+
+        t.programas.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'prog-card';
+
+          card.innerHTML = `
+            <div class="prog-icon">${p.icono || '⭐'}</div>
+            <h3>${p.titulo || ''}</h3>
+            <p>${p.descripcion || ''}</p>
+          `;
+
+          container.appendChild(card);
+        });
+      }
+
+    }
+
+    // =========================
+    // BLOG / NOTICIAS
+    // =========================
+    if (t.blog && Array.isArray(t.blog)) {
+
+      const container = document.getElementById('blog-container');
+
+      if (container) {
+        container.innerHTML = '';
+
+        t.blog.forEach(n => {
+          const card = document.createElement('div');
+          card.className = 'blog-card';
+
+          card.innerHTML = `
+            <div class="blog-body">
+              <span class="blog-cat">${n.categoria || 'Noticias'}</span>
+              <h3>${n.titulo || ''}</h3>
+              <p>${n.resumen || ''}</p>
+              <div class="blog-meta">${n.fecha || ''}</div>
+            </div>
+          `;
+
+          container.appendChild(card);
+        });
+      }
+
     }
 
   } catch (error) {
