@@ -22,24 +22,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log("TEXTOS:", t);
 
-    // =========================
-    // HERO
-    // =========================
-    if (t.hero) {
+// =========================
+// HERO
+// =========================
+if (t.hero) {
 
-      // TÍTULO
-      if (t.hero.titulo) {
-        const el = document.getElementById('txt-hero-titulo');
-        if (el) el.innerHTML = t.hero.titulo;
-      }
+  const elTitulo = document.getElementById('txt-hero-titulo');
+  if (elTitulo) {
+    elTitulo.innerHTML = `
+      ${t.hero.titulo || ''} <span>${t.hero.titulo_destacado || ''}</span>
+    `;
+  }
 
-      // SUBTÍTULO
-      if (t.hero.descripcion) {
-        const el = document.getElementById('txt-hero-subtitulo');
-        if (el) el.textContent = t.hero.descripcion;
-      }
+  const elSub = document.getElementById('txt-hero-subtitulo');
+  if (elSub) {
+    elSub.textContent = t.hero.descripcion || '';
+  }
 
-    }
+}
 
     // =========================
     // QUIÉNES SOMOS
