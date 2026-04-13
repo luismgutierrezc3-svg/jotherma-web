@@ -14,127 +14,120 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!res.ok) {
       console.log("No se pudo cargar textos");
-      return;
-    }
+    } else {
 
-    const data = await res.json();
-    const t = data.textos || {};
+      const data = await res.json();
+      const t = data.textos || {};
 
-    console.log("TEXTOS:", t);
+      console.log("TEXTOS:", t);
 
-// =========================
-// HERO
-// =========================
-if (t.hero) {
-
-  const elTitulo = document.getElementById('txt-hero-titulo');
-  if (elTitulo) {
-    elTitulo.innerHTML = `
-      ${t.hero.titulo || ''} <span>${t.hero.titulo_destacado || ''}</span>
-    `;
-  }
-
-  const elSub = document.getElementById('txt-hero-subtitulo');
-  if (elSub) {
-    elSub.textContent = t.hero.descripcion || '';
-  }
-
-}
-
-    
-    // =========================
-// QUIÉNES SOMOS
-// =========================
-if (t.quienes) {
-
-  const elTitulo = document.getElementById('txt-quienes-titulo');
-  if (elTitulo) elTitulo.textContent = t.quienes.titulo || '';
-
-  const elDesc = document.getElementById('txt-quienes-desc');
-  if (elDesc) {
-    elDesc.textContent = `
-      ${t.quienes.descripcion || ''}
-      ${t.quienes.descripcion1 || ''}
-      ${t.quienes.descripcion2 || ''}
-    `;
-  }
-
-}
-
-   // =========================
-// PROGRAMAS
-// =========================
-if (t.programas) {
-
-  const container = document.getElementById('programas-container');
-
-  if (container) {
-    container.innerHTML = '';
-
-    const programas = [
-      {
-        nombre: t.programas.educacion_nombre,
-        desc: t.programas.educacion_desc,
-        icono: '🎓'
-      },
-      {
-        nombre: t.programas.deporte_nombre,
-        desc: t.programas.deporte_desc,
-        icono: '⚽'
-      },
-      {
-        nombre: t.programas.nutricion_nombre,
-        desc: t.programas.nutricion_desc,
-        icono: '🥗'
+      // =========================
+      // HERO
+      // =========================
+      if (t.hero) {
+        const elTitulo = document.getElementById('txt-hero-titulo');
+        if (elTitulo) {
+          elTitulo.innerHTML = `${t.hero.titulo || ''} <span>${t.hero.titulo_destacado || ''}</span>`;
+        }
+        const elSub = document.getElementById('txt-hero-subtitulo');
+        if (elSub) {
+          elSub.textContent = t.hero.descripcion || '';
+        }
       }
-    ];
 
-    programas.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'prog-card';
+      // =========================
+      // QUIÉNES SOMOS
+      // =========================
+      if (t.quienes) {
+        const elTitulo = document.getElementById('txt-quienes-titulo');
+        if (elTitulo) elTitulo.textContent = t.quienes.titulo || '';
 
-      card.innerHTML = `
-        <div class="prog-icon">${p.icono}</div>
-        <h3>${p.nombre || ''}</h3>
-        <p>${p.desc || ''}</p>
-      `;
+        const elDesc = document.getElementById('txt-quienes-descripcion');
+        if (elDesc) elDesc.textContent = t.quienes.descripcion || '';
 
-      container.appendChild(card);
-    });
-  }
-}
+        const elMision = document.getElementById('txt-quienes-mision');
+        if (elMision && t.quienes.mision) elMision.textContent = t.quienes.mision;
 
-    // =========================
-    // BLOG / NOTICIAS
-    // =========================
-    if (t.blog && Array.isArray(t.blog)) {
+        const elVision = document.getElementById('txt-quienes-vision');
+        if (elVision && t.quienes.vision) elVision.textContent = t.quienes.vision;
+      }
 
-      const container = document.getElementById('blog-container');
+      // =========================
+      // CONTACTO
+      // =========================
+      if (t.contacto) {
+        const elDir = document.getElementById('txt-contacto-direccion');
+        if (elDir && t.contacto.direccion) elDir.textContent = t.contacto.direccion;
 
-      if (container) {
-        container.innerHTML = '';
+        const elEmail = document.getElementById('txt-contacto-email');
+        if (elEmail && t.contacto.email) {
+          elEmail.textContent = t.contacto.email;
+          elEmail.href = `mailto:${t.contacto.email}`;
+        }
 
-        t.blog.forEach(n => {
-          const card = document.createElement('div');
-          card.className = 'blog-card';
+        const elTel = document.getElementById('txt-contacto-telefono');
+        if (elTel && t.contacto.telefono) elTel.textContent = t.contacto.telefono;
 
-          card.innerHTML = `
-            <div class="blog-body">
-              <span class="blog-cat">${n.categoria || 'Noticias'}</span>
-              <h3>${n.titulo || ''}</h3>
-              <p>${n.resumen || ''}</p>
-              <div class="blog-meta">${n.fecha || ''}</div>
-            </div>
-          `;
-
-          container.appendChild(card);
-        });
+        const elHorario = document.getElementById('txt-contacto-horario');
+        if (elHorario && t.contacto.horario) elHorario.textContent = t.contacto.horario;
       }
 
     }
-
   } catch (error) {
     console.log("Error textos:", error);
+  }
+
+  // =========================
+  // GALERÍA
+  // =========================
+  try {
+    const resGal = await fetch(`${API_URL}/galeria`);
+    if (resGal.ok) {
+      const dataGal = await resGal.json();
+      const items = dataGal.galeria || [];
+      const grid = document.getElementById('galeria-grid');
+      if (grid && items.length > 0) {
+        grid.innerHTML = items.map(item => `
+          <div class="gal-item">
+            <img src="${item.imagen_url}" alt="${item.titulo || 'Foto JOTHERMA'}" loading="lazy"/>
+            ${item.titulo ? `<div class="gal-caption">${item.titulo}</div>` : ''}
+          </div>
+        `).join('');
+      }
+    }
+  } catch (error) {
+    console.log("Error galería:", error);
+  }
+
+  // =========================
+  // PUBLICACIONES / BLOG
+  // =========================
+  try {
+    const resBlog = await fetch(`${API_URL}/publicaciones`);
+    if (resBlog.ok) {
+      const dataBlog = await resBlog.json();
+      const pubs = (dataBlog.publicaciones || []).filter(p => p.estado === 'publicado');
+      const grid = document.getElementById('blog-grid');
+      if (grid) {
+        if (pubs.length > 0) {
+          grid.innerHTML = pubs.map(n => `
+            <div class="blog-card">
+              ${n.imagen_url ? `<div class="blog-img"><img src="${n.imagen_url}" alt="${n.titulo}" loading="lazy"/></div>` : ''}
+              <div class="blog-body">
+                <span class="blog-cat">${n.categoria || 'Noticias'}</span>
+                <h3>${n.titulo || ''}</h3>
+                <p>${(n.contenido || '').substring(0, 120)}...</p>
+                <div class="blog-meta">${new Date(n.creado_en).toLocaleDateString('es-CO')}</div>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">No hay publicaciones aún.</div>';
+        }
+      }
+    }
+  } catch (error) {
+    console.log("Error publicaciones:", error);
   }
 
 });
