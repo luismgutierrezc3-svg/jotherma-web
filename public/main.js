@@ -149,3 +149,59 @@ document.addEventListener('DOMContentLoaded', cargarGaleria);
     }
   });
 })();
+// ========================================
+// TEXTOS DINÁMICOS
+// ========================================
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch(`${API_URL}/textos`);
+    if (!res.ok) return;
+
+    const data = await res.json();
+    console.log("TEXTOS:", data);
+
+    const t = data.textos || {};
+
+    // HERO
+    if (t.hero) {
+      if (t.hero.titulo)
+        document.getElementById('txt-hero-titulo').textContent = t.hero.titulo;
+
+      if (t.hero.descripcion)
+        document.getElementById('txt-hero-subtitulo').textContent = t.hero.descripcion;
+    }
+
+    // QUIÉNES SOMOS
+    if (t.quienes) {
+      if (t.quienes.titulo)
+        document.getElementById('txt-quienes-titulo').textContent = t.quienes.titulo;
+
+      if (t.quienes.descripcion)
+        document.getElementById('txt-quienes-descripcion').textContent = t.quienes.descripcion;
+
+      if (t.quienes.mision)
+        document.getElementById('txt-quienes-mision').textContent = t.quienes.mision;
+
+      if (t.quienes.vision)
+        document.getElementById('txt-quienes-vision').textContent = t.quienes.vision;
+    }
+
+    // CONTACTO
+    if (t.contacto) {
+      if (t.contacto.direccion)
+        document.getElementById('txt-contacto-direccion').textContent = t.contacto.direccion;
+
+      if (t.contacto.email) {
+        const el = document.getElementById('txt-contacto-email');
+        el.textContent = t.contacto.email;
+        el.href = 'mailto:' + t.contacto.email;
+      }
+
+      if (t.contacto.telefono)
+        document.getElementById('txt-contacto-telefono').textContent = t.contacto.telefono;
+    }
+
+  } catch (e) {
+    console.log("Error cargando textos:", e);
+  }
+});
