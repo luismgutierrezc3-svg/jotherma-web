@@ -570,62 +570,6 @@
   </div>
 </div>
 
-
-<script src="main.js"></script>
-<script>
-// ══════════════════════════════════════════════════════════
-// CARGAR TEXTOS DINÁMICOS DESDE LA API
-// ══════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    const res = await fetch('/api/textos');
-    if (!res.ok) return;
-    const data = await res.json();
-    const t = data.textos || {};
-
-    // HERO
-    if (t.hero) {
-      if (t.hero.titulo)    document.getElementById('txt-hero-titulo').textContent    = t.hero.titulo;
-      if (t.hero.subtitulo) document.getElementById('txt-hero-subtitulo').textContent = t.hero.subtitulo;
-    }
-
-    // QUIÉNES SOMOS
-    if (t.quienes) {
-      if (t.quienes.titulo)       document.getElementById('txt-quienes-titulo').textContent      = t.quienes.titulo;
-      if (t.quienes.descripcion)  document.getElementById('txt-quienes-descripcion').textContent = t.quienes.descripcion;
-      if (t.quienes.mision)       document.getElementById('txt-quienes-mision').textContent      = t.quienes.mision;
-      if (t.quienes.vision)       document.getElementById('txt-quienes-vision').textContent      = t.quienes.vision;
-    }
-
-    // CONTACTO
-    if (t.contacto) {
-      if (t.contacto.direccion) {
-        document.getElementById('txt-contacto-direccion').textContent = t.contacto.direccion;
-      }
-      if (t.contacto.email_de_contacto) {
-        const el = document.getElementById('txt-contacto-email');
-        el.textContent = t.contacto.email_de_contacto;
-        el.href = 'mailto:' + t.contacto.email_de_contacto;
-        // También actualizar el footer
-        const footerEmail = document.getElementById('txt-footer-email');
-        if (footerEmail) {
-          footerEmail.textContent = t.contacto.email_de_contacto;
-          footerEmail.href = 'mailto:' + t.contacto.email_de_contacto;
-        }
-      }
-      if (t.contacto.telefono) {
-        document.getElementById('txt-contacto-telefono').textContent = t.contacto.telefono;
-      }
-      if (t.contacto.horario) {
-        document.getElementById('txt-contacto-horario').textContent = t.contacto.horario;
-      }
-    }
-  } catch(e) {
-    console.log('Textos dinámicos no disponibles, usando valores por defecto.');
-  }
-});
-</script>
-
 <script src="main.js"></script>
 
 </body>
