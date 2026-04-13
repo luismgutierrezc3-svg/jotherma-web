@@ -148,17 +148,80 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 // =========================
 // COOKIES BANNER
 // =========================
-document.querySelector('.btn-accept').addEventListener('click', () => {
-  document.getElementById('cookies-banner').style.display = 'none';
-  localStorage.setItem('cookies-accepted', 'true');
-});
+const btnAccept = document.querySelector('.btn-accept');
+if (btnAccept) {
+  btnAccept.addEventListener('click', () => {
+    document.getElementById('cookies-banner').style.display = 'none';
+    localStorage.setItem('cookies-accepted', 'true');
+  });
+}
 
-document.querySelector('.btn-reject').addEventListener('click', () => {
-  document.getElementById('cookies-banner').style.display = 'none';
-  localStorage.setItem('cookies-accepted', 'essential');
-});
-
+const btnReject = document.querySelector('.btn-reject');
+if (btnReject) {
+  btnReject.addEventListener('click', () => {
+    document.getElementById('cookies-banner').style.display = 'none';
+    localStorage.setItem('cookies-accepted', 'essential');
+  });
+}
 // Ocultar si ya aceptó antes
 if (localStorage.getItem('cookies-accepted')) {
   document.getElementById('cookies-banner').style.display = 'none';
+}
+// =========================
+// FUNCIONES INTERACTIVAS
+// =========================
+
+// Tabs legales
+function showLegal(id, btn) {
+  document.querySelectorAll('.legal-panel').forEach(el => {
+    el.classList.remove('active');
+  });
+
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+
+  document.querySelectorAll('.legal-tab').forEach(el => {
+    el.classList.remove('active');
+  });
+
+  if (btn) btn.classList.add('active');
+
+  // Scroll automático a sección legal
+  const section = document.getElementById('legal');
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// Método de pago
+function selMetodo(btn, tipo) {
+  document.querySelectorAll('.metodo-btn').forEach(b => {
+    b.classList.remove('active');
+  });
+
+  btn.classList.add('active');
+
+  document.getElementById('form-online').style.display =
+    tipo === 'online' ? 'block' : 'none';
+
+  document.getElementById('form-transferencia').style.display =
+    tipo === 'transferencia' ? 'block' : 'none';
+}
+
+// Selección de monto
+function selMonto(el, monto) {
+  document.querySelectorAll('.don-op').forEach(e => {
+    e.classList.remove('active');
+  });
+
+  el.classList.add('active');
+
+  const input = document.getElementById('monto-input');
+
+  if (monto !== 'otro') {
+    input.value = monto;
+  } else {
+    input.value = '';
+    input.focus();
+  }
 }
