@@ -1356,7 +1356,7 @@ function authHeaders() {
 async function cargarPublicacionesAdmin() {
   const lista = document.getElementById('lista-publicaciones');
   try {
-    const res = await fetch('/api/publicaciones', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const res = await fetch(`${API_URL}/publicaciones`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     const data = await res.json();
     const pubs = data.publicaciones || [];
     if (!pubs.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);">No hay publicaciones aún.</div>'; return; }
@@ -1429,7 +1429,7 @@ async function guardarPublicacion() {
     formData.append('estado', estado);
     if (imagenFile) formData.append('imagen', imagenFile);
 
-    const url = id ? `/api/publicaciones/${id}` : '/api/publicaciones';
+    const url = id ? `${API_URL}/publicaciones/${id}` : `${API_URL}/publicaciones`;
     const method = id ? 'PUT' : 'POST';
 
     const res = await fetch(url, {
@@ -1448,7 +1448,7 @@ async function guardarPublicacion() {
 async function eliminarPublicacion(id) {
   if (!confirm('¿Eliminar esta publicación?')) return;
   try {
-    await fetch(`/api/publicaciones/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    await fetch(`${API_URL}/publicaciones/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     showToast('🗑️ Publicación eliminada');
     cargarPublicacionesAdmin();
   } catch(e) { showToast('❌ Error eliminando', 'error'); }
@@ -1460,7 +1460,7 @@ async function eliminarPublicacion(id) {
 async function cargarGaleriaAdmin() {
   const lista = document.getElementById('lista-galeria');
   try {
-    const res = await fetch('/api/galeria', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const res = await fetch(`${API_URL}/galeria`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     const data = await res.json();
     const items = data.galeria || [];
     if (!items.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);grid-column:1/-1;">No hay fotos en la galería.</div>'; return; }
@@ -1508,7 +1508,7 @@ async function guardarFotoGaleria() {
     formData.append('descripcion', descripcion);
     formData.append('imagen', imagenFile);
 
-    const res = await fetch('/api/galeria', {
+    const res = await fetch(`${API_URL}/galeria`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
       body: formData
@@ -1524,7 +1524,7 @@ async function guardarFotoGaleria() {
 async function eliminarFotoGaleria(id) {
   if (!confirm('¿Eliminar esta foto?')) return;
   try {
-    await fetch(`/api/galeria/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    await fetch(`${API_URL}/galeria/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     showToast('🗑️ Foto eliminada');
     cargarGaleriaAdmin();
   } catch(e) { showToast('❌ Error eliminando', 'error'); }
@@ -1536,7 +1536,7 @@ async function eliminarFotoGaleria(id) {
 async function cargarMensajes() {
   const lista = document.getElementById('lista-mensajes');
   try {
-    const res = await fetch('/api/mensajes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const res = await fetch(`${API_URL}/mensajes`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     const data = await res.json();
     const msgs = data.mensajes || [];
     if (!msgs.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);">No hay mensajes.</div>'; return; }
@@ -1561,7 +1561,7 @@ async function cargarMensajes() {
 
 async function cambiarEstadoMensaje(id, estado) {
   try {
-    await fetch(`/api/mensajes/${id}/estado`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ estado }) });
+    await fetch(`${API_URL}/mensajes/${id}/estado`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ estado }) });
     cargarMensajes();
   } catch(e) { showToast('❌ Error', 'error'); }
 }
@@ -1572,7 +1572,7 @@ async function cambiarEstadoMensaje(id, estado) {
 async function cargarVoluntarios() {
   const lista = document.getElementById('lista-voluntarios');
   try {
-    const res = await fetch('/api/voluntarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const res = await fetch(`${API_URL}/voluntarios`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     const data = await res.json();
     const vols = data.voluntarios || [];
     if (!vols.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);">No hay solicitudes.</div>'; return; }
@@ -1595,7 +1595,7 @@ async function cargarVoluntarios() {
 
 async function cambiarEstadoVoluntario(id, estado) {
   try {
-    await fetch(`/api/voluntarios/${id}/estado`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ estado }) });
+    await fetch(`${API_URL}/voluntarios/${id}/estado`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ estado }) });
     cargarVoluntarios();
   } catch(e) { showToast('❌ Error', 'error'); }
 }
@@ -1606,7 +1606,7 @@ async function cambiarEstadoVoluntario(id, estado) {
 async function cargarDonaciones() {
   const lista = document.getElementById('lista-donaciones');
   try {
-    const res = await fetch('/api/donaciones', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const res = await fetch(`${API_URL}/donaciones`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     const data = await res.json();
     const dons = data.donaciones || [];
     if (!dons.length) { lista.innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto3);">No hay donaciones.</div>'; return; }
@@ -1629,7 +1629,7 @@ async function cargarDonaciones() {
 
 async function cambiarEstadoDonacion(id, estado) {
   try {
-    await fetch(`/api/donaciones/${id}/estado`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ estado }) });
+    await fetch(`${API_URL}/donaciones/${id}/estado`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ estado }) });
     cargarDonaciones();
   } catch(e) { showToast('❌ Error', 'error'); }
 }
@@ -1640,7 +1640,7 @@ async function cambiarEstadoDonacion(id, estado) {
 async function cargarUsuarios() {
   const lista = document.getElementById('lista-usuarios');
   try {
-    const res = await fetch('/api/usuarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const res = await fetch(`${API_URL}/usuarios`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     const data = await res.json();
     const users = data.usuarios || [];
     lista.innerHTML = users.map(u => `
@@ -1669,7 +1669,7 @@ async function guardarUsuario() {
   const rol = document.getElementById('usr-rol').value;
   if (!nombre || !email || !password) { showToast('Completa todos los campos', 'error'); return; }
   try {
-    const res = await fetch('/api/usuarios', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ nombre, email, password, rol }) });
+    const res = await fetch(`${API_URL}/usuarios`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ nombre, email, password, rol }) });
     if (!res.ok) { const d = await res.json(); throw new Error(d.message || 'Error'); }
     showToast('✅ Usuario creado');
     cerrarModal('modal-usuario');
@@ -1680,7 +1680,7 @@ async function guardarUsuario() {
 async function eliminarUsuario(id) {
   if (!confirm('¿Eliminar este usuario?')) return;
   try {
-    await fetch(`/api/usuarios/${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`${API_URL}/usuarios/${id}`, { method: 'DELETE', headers: authHeaders() });
     showToast('🗑️ Usuario eliminado');
     cargarUsuarios();
   } catch(e) { showToast('❌ Error', 'error'); }
@@ -1691,7 +1691,7 @@ async function eliminarUsuario(id) {
 // ══════════════════════════════════════════════════════════
 async function cargarConfiguracion() {
   try {
-    const res = await fetch('/api/configuracion', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+    const res = await fetch(`${API_URL}/configuracion`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     const data = await res.json();
     const c = data.configuracion || {};
     if (document.getElementById('cfg-banco')) document.getElementById('cfg-banco').value = c.banco_nombre || '';
@@ -1711,7 +1711,7 @@ async function guardarConfiguracion() {
       banco_nit: document.getElementById('cfg-nit').value,
       banco_razon_social: document.getElementById('cfg-razon').value,
     };
-    const res = await fetch('/api/configuracion', { method: 'POST', headers: authHeaders(), body: JSON.stringify(updates) });
+    const res = await fetch(`${API_URL}/configuracion`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(updates) });
     if (!res.ok) throw new Error('Error');
     showToast('✅ Configuración guardada');
   } catch(e) { showToast('❌ Error guardando', 'error'); }
