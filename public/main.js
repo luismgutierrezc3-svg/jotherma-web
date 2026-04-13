@@ -4,7 +4,7 @@ const API_URL = 'https://jotherma-web-production.up.railway.app/api';
 // Esperar a que cargue la página
 document.addEventListener('DOMContentLoaded', async () => {
 
-  console.log("JS cargado correctamente");
+  console.log("VERSION NUEVA 123 🔥");
 
   // =========================
   // TEXTOS
@@ -41,48 +41,68 @@ if (t.hero) {
 
 }
 
+    
     // =========================
-    // QUIÉNES SOMOS
-    // =========================
-    if (t.quienes) {
+// QUIÉNES SOMOS
+// =========================
+if (t.quienes) {
 
-      if (t.quienes.titulo) {
-        const el = document.getElementById('txt-quienes-titulo');
-        if (el) el.textContent = t.quienes.titulo;
+  const elTitulo = document.getElementById('txt-quienes-titulo');
+  if (elTitulo) elTitulo.textContent = t.quienes.titulo || '';
+
+  const elDesc = document.getElementById('txt-quienes-desc');
+  if (elDesc) {
+    elDesc.textContent = `
+      ${t.quienes.descripcion || ''}
+      ${t.quienes.descripcion1 || ''}
+      ${t.quienes.descripcion2 || ''}
+    `;
+  }
+
+}
+
+   // =========================
+// PROGRAMAS
+// =========================
+if (t.programas) {
+
+  const container = document.getElementById('programas-container');
+
+  if (container) {
+    container.innerHTML = '';
+
+    const programas = [
+      {
+        nombre: t.programas.educacion_nombre,
+        desc: t.programas.educacion_desc,
+        icono: '🎓'
+      },
+      {
+        nombre: t.programas.deporte_nombre,
+        desc: t.programas.deporte_desc,
+        icono: '⚽'
+      },
+      {
+        nombre: t.programas.nutricion_nombre,
+        desc: t.programas.nutricion_desc,
+        icono: '🥗'
       }
+    ];
 
-      if (t.quienes.descripcion) {
-        const el = document.getElementById('txt-quienes-desc');
-        if (el) el.textContent = t.quienes.descripcion;
-      }
+    programas.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'prog-card';
 
-    }
+      card.innerHTML = `
+        <div class="prog-icon">${p.icono}</div>
+        <h3>${p.nombre || ''}</h3>
+        <p>${p.desc || ''}</p>
+      `;
 
-    // =========================
-    // PROGRAMAS
-    // =========================
-    if (t.programas && Array.isArray(t.programas)) {
-
-      const container = document.getElementById('programas-container');
-
-      if (container) {
-        container.innerHTML = '';
-
-        t.programas.forEach(p => {
-          const card = document.createElement('div');
-          card.className = 'prog-card';
-
-          card.innerHTML = `
-            <div class="prog-icon">${p.icono || '⭐'}</div>
-            <h3>${p.titulo || ''}</h3>
-            <p>${p.descripcion || ''}</p>
-          `;
-
-          container.appendChild(card);
-        });
-      }
-
-    }
+      container.appendChild(card);
+    });
+  }
+}
 
     // =========================
     // BLOG / NOTICIAS
