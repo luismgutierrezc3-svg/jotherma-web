@@ -4,7 +4,7 @@
   "description": "Sitio web de la Fundación JOTHERMA con panel de administración seguro",
   "main": "server/index.js",
   "scripts": {
-    "start": "node server/init-db.js && node server/index.js",
+    "start": "node server/index.js",
     "dev": "nodemon server/index.js",
     "init-db": "node server/init-db.js"
   },
